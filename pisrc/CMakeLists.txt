@@ -10,4 +10,5 @@ add_subdirectory("../common" "common_pi")
 
 add_executable(microsynthPi main_pi.cpp)
 target_link_libraries(microsynthPi wiringPi common)
+target_include_directories(microsynthPi PRIVATE "../common")
 target_include_directories(microsynthPi PRIVATE "../less-WiringPi/wiringPi")

@@ -9,3 +9,4 @@ add_subdirectory("../common" "common_test")
 
 add_executable(microsynthTest main_test.cpp)
 target_link_libraries(microsynthTest common)
+target_include_directories(microsynthTest PRIVATE "../common")

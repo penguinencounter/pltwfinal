@@ -1,5 +1,6 @@
 #include <iostream>
+#include "libmicrosynth.h"
 
 int main() {
-  std::cout << "Hello, World!" << std::endl;
+    std::cout << microsynth::example() << std::endl;
 }
