@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.30)
+
+project(microsynthPi)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic-errors -Wall -Weffc++ -Wextra -Wconversion -Wsign-conversion -Werror")
+
+add_subdirectory("../less-WiringPi/wiringPi" "wiringPi_pisrc")
+add_subdirectory("../common" "common_pi")
+
+add_executable(microsynthPi main_pi.cpp)
+target_link_libraries(microsynthPi wiringPi common)
+target_include_directories(microsynthPi PRIVATE "../less-WiringPi/wiringPi")

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="CMakeSharedSettings">
-    <configurations>
-      <configuration PROFILE_NAME="Debug aarch64" ENABLED="true" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DCMAKE_TOOLCHAIN_FILE=./toolchain.cmake" />
-    </configurations>
-  </component>
-</project>
