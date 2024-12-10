@@ -23,7 +23,7 @@ jobs:
       - name: Configure cmake
         run: |
           pushd testsrc || exit 1
-          cmake -B ${{github.workspace}}/testbuild -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -G Ninja || exit $?
+          cmake -B ${{github.workspace}}/testbuild -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} || exit $?
           popd
       - name: Build it
         run: |
@@ -54,7 +54,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
         pushd pisrc || exit 1
-        cmake -B ${{github.workspace}}/pibuild -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=./toolchain.cmake -G Ninja
+        cmake -B ${{github.workspace}}/pibuild -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=./toolchain.cmake || exit $?
         popd
 
     - name: Build
