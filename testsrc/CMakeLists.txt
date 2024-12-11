@@ -5,7 +5,13 @@ project(microsynthTest)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic-errors -Wall -Weffc++ -Wextra -Wconversion -Wsign-conversion -Werror")
 
-set(TargetArch "x64")
+if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
+    set(TargetArch "aarch64")
+elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
+    set(TargetArch "x64")
+else()
+    message(FATAL_ERROR "Could not detect the current architecture (maybe ${CMAKE_SYSTEM_PROCESSOR} isn't supported?)")
+endif()
 
 add_subdirectory("../common" "common_test")
 
