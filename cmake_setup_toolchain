@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-
-mkdir -p build || exit
-pushd build || exit
-rm -r -- ./* || true
-cmake -DCMAKE_TOOLCHAIN_FILE=./toolchain.cmake -G Ninja ..
-popd
