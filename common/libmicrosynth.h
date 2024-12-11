@@ -5,9 +5,12 @@
 #ifndef LIBMICROSYNTH_H
 #define LIBMICROSYNTH_H
 #include <string>
+#include "portaudio.h"
 
 namespace microsynth {
-    std::string example();
+    void initAudio();
+
+    int countDevices();
 }
 
 #endif //LIBMICROSYNTH_H

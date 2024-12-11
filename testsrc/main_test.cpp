@@ -2,5 +2,6 @@
 #include "libmicrosynth.h"
 
 int main() {
-    std::cout << microsynth::example() << std::endl;
+    microsynth::initAudio();
+    std::cout << "there are " << microsynth::countDevices() << " devices" << std::endl;
 }

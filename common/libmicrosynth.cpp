@@ -5,7 +5,12 @@
 #include "libmicrosynth.h"
 
 namespace microsynth {
-    std::string example() {
-        return "Hello, world!";
+    void initAudio() {
+        Pa_Initialize();
+    }
+
+
+    int countDevices() {
+        return Pa_GetDeviceCount();
     }
 }
