@@ -23,9 +23,12 @@ if (NOT (${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "aarch64"))
     # search programs in the host environment
     set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 
+    message("    Not using host libraries")
     # search headers and libraries in the target environment
     set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 else()
     message("Already on the target architecture, using host compilers and libraries")
 endif ()
+
+message("    Not using host #includes")
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)

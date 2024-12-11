@@ -8,4 +8,4 @@ add_library(portaudio SHARED IMPORTED GLOBAL)
 set_target_properties(portaudio PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/../portaudio_${TargetArch}/lib/libportaudio.so")
 
 target_link_libraries(common PRIVATE portaudio)
-target_include_directories(common PRIVATE "../portaudio_${TargetArch}/include")
+target_include_directories(common PRIVATE "${CMAKE_SOURCE_DIR}/../portaudio_${TargetArch}/include")
