@@ -9,6 +9,6 @@
 namespace microsynth_hw {
     void init() {
         wiringPiSetup();
-        wiringPiSetupGpio();
+        // wiringPiSetupGpio();
     }
 }
