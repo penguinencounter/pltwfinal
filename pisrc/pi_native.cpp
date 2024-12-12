@@ -4,8 +4,6 @@
 
 #include "pi_native.h"
 
-#include "wiringPi.h"
-
 namespace microsynth_hw {
     void init() {
         // use 'native' pin numbering (i.e. 17 -> GPIO 17 instead of 0 -> GPIO 17)
