@@ -5,7 +5,7 @@
 #include "libmicrosynth.h"
 #include "pi_native.h"
 
-constexpr int PIN_TEST = 0 /* gpio17/header11 */;
+constexpr int PIN_TEST = 17 /* gpio17/header11 */;
 
 namespace chrono = std::chrono;
 namespace this_thread = std::this_thread;
