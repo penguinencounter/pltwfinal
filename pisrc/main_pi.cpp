@@ -26,6 +26,9 @@ int main() {
 
     pinMode(PIN_TEST, INPUT);
     pullUpDnControl(PIN_TEST, PUD_DOWN);
+
+    // I can't noreturn this because it's main and the implied return causes -Werror to have a breakdown
+    // ReSharper disable once CppDFAEndlessLoop
     for (;;) {
         std::this_thread::sleep_for(chrono::milliseconds(500));
         std::cout << "The current state of GPIO 17 is: " << onoff(digitalRead(PIN_TEST)) << std::endl;

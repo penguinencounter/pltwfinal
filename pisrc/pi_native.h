@@ -5,8 +5,6 @@
 #ifndef PI_NATIVE_H
 #define PI_NATIVE_H
 
-#include "wiringPi.h"
-
 namespace microsynth_hw {
     void init();
 }
