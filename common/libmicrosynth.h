@@ -8,9 +8,6 @@
 #include "portaudio.h"
 
 namespace microsynth {
-    void initAudio();
-
-    int countDevices();
 }
 
 #endif //LIBMICROSYNTH_H

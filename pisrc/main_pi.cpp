@@ -3,6 +3,7 @@
 #include <wiringPi.h>
 
 #include "libmicrosynth.h"
+#include "audio.h"
 #include "pi_native.h"
 
 constexpr int PIN_TEST = 17 /* gpio17/header11 */;
@@ -19,7 +20,7 @@ inline std::string onoff(const int &isItOn) {
 }
 
 int main() {
-    microsynth_hw::init();
+    // microsynth_hw::init();
     microsynth::initAudio();
     std::cout << "Hello, world!\n";
     std::cout << "There are " << microsynth::countDevices() << " devices." << std::endl;
