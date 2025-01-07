@@ -11,7 +11,35 @@
 #include "helpers.h"
 
 namespace microsynth {
-    static constexpr auto TAG_DESTRUCTOR = "~AudioDriver";
+
+    void QueueSFXCommand::run(pa_userdata& data) {
+        data.running.push_back(std::move(q));
+    }
+
+    QueueSFXCommand::QueueSFXCommand(const QueueSFXCommand &from): q(from.q) {
+    }
+
+    QueueSFXCommand::QueueSFXCommand(QueueSFXCommand &&from) noexcept: q(nullptr) {
+        q = std::move(from.q);
+    }
+
+    QueueSFXCommand &QueueSFXCommand::operator=(const QueueSFXCommand &from) {
+        if (this == &from) return *this;
+        q = from.q;
+        return *this;
+    }
+
+    QueueSFXCommand &QueueSFXCommand::operator=(QueueSFXCommand &&from) noexcept {
+        q = from.q;
+        from.q = nullptr;
+        return *this;
+    }
+
+    QueueSFXCommand::QueueSFXCommand(const std::shared_ptr<queueable> &from): q(from) {
+    }
+
+    QueueSFXCommand::~QueueSFXCommand() = default;
+
 
     std::string construct_pa_error_message(const PaError pa_error, const char *const tag = nullptr) {
         std::stringstream buf{};
@@ -39,18 +67,18 @@ namespace microsynth {
         [[maybe_unused]] unsigned long frames_per_buf,
         [[maybe_unused]] const PaStreamCallbackTimeInfo *time_info,
         [[maybe_unused]] PaStreamCallbackFlags status_flags,
-        void *user_data
+        [[maybe_unused]] void *user_data
     ) {
-        auto *data = static_cast<pa_userdata *>(user_data);
+        // auto *data = static_cast<pa_userdata *>(user_data);
         auto *out = static_cast<float *>(output_buf);
 
         for (size_t i = 0; i < frames_per_buf; i++) {
-            *out++ = data->sine[data->left_phase];
-            *out++ = data->sine[data->right_phase];
-            data->left_phase += 3;
-            if (data->left_phase >= TABLE_SIZE) data->left_phase -= TABLE_SIZE;
-            data->right_phase += 3;
-            if (data->right_phase >= TABLE_SIZE) data->right_phase -= TABLE_SIZE;
+            *out++ = 0.0f;
+            *out++ = 0.0f;
+            // data->left_phase += 3;
+            // if (data->left_phase >= TABLE_SIZE) data->left_phase -= TABLE_SIZE;
+            // data->right_phase += 3;
+            // if (data->right_phase >= TABLE_SIZE) data->right_phase -= TABLE_SIZE;
         }
         return paContinue;
     }
@@ -68,13 +96,6 @@ namespace microsynth {
             &data
         ));
         pawrap(Pa_StartStream(stream));
-
-        for (size_t i = 0; i < TABLE_SIZE; i++) {
-            data.sine[i] = static_cast<float>(std::sin(
-                static_cast<double>(i) / static_cast<double>(TABLE_SIZE) * M_PI * 2.
-            ));
-        }
-        data.left_phase = data.right_phase = 0;
     }
 
     void AudioDriver::finalize() {

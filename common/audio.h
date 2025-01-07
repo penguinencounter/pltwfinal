@@ -5,33 +5,67 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 #include <portaudio.h>
+#include <queue>
+#include <vector>
 #include <bits/basic_ios.h>
+#include "signals.h"
 
 namespace microsynth {
+    class AudioDriver;
+
+    struct queueable {
+        unsigned int id;
+        std::shared_ptr<signal_buf> repeat;
+        size_t length;
+        size_t position;
+    };
+
+    struct pa_userdata {
+        AudioDriver *that;
+        std::vector<std::shared_ptr<queueable>> running{};
+    };
+
+    class ActionCommand {
+    public:
+        virtual ~ActionCommand() = default;
+
+        virtual void run([[maybe_unused]] pa_userdata& data) {}
+    };
+
+    class QueueSFXCommand final : ActionCommand {
+    private:
+        std::shared_ptr<queueable> q;
+
+    public:
+        explicit QueueSFXCommand(const std::shared_ptr<queueable> &from);
+
+        QueueSFXCommand &operator=(const QueueSFXCommand &from);
+
+        QueueSFXCommand &operator=(QueueSFXCommand &&from) noexcept;
+
+        QueueSFXCommand(const QueueSFXCommand &from);
+
+        QueueSFXCommand(QueueSFXCommand &&from) noexcept;
+
+        void run(pa_userdata& data) override;
+
+        ~QueueSFXCommand() override;
+    };
+
     class AudioDriver {
     public:
         static constexpr int SAMPLE_RATE = 44100;
         static constexpr int TABLE_SIZE = 200;
 
     private:
-        bool finalized{false};
+        std::queue<ActionCommand> actions{};
 
-        struct pa_userdata {
-            AudioDriver *that;
-            float sine[TABLE_SIZE];
-            int left_phase;
-            int right_phase;
-            int pulse;
-        };
+        bool finalized{false};
 
         pa_userdata data{
             .that = this,
-            .sine = {},
-            .left_phase = 0,
-            .right_phase = 0,
-            .pulse = 0,
         };
-        PaStream *stream{};
+        PaStream *stream{nullptr};
 
         static int pa_callback(
             const void *input_buf,
