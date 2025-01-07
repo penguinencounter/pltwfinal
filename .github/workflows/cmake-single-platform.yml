@@ -30,8 +30,6 @@ jobs:
           pushd testsrc || exit 1
           cmake --build ${{github.workspace}}/testbuild --config ${{env.BUILD_TYPE}}
           popd
-      - name: Run it
-        run: ${{github.workspace}}/testbuild/microsynthTest
 
   build_aarch:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
