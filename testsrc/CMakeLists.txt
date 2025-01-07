@@ -18,6 +18,6 @@ add_subdirectory("../common" "common_test")
 add_executable(microsynthTest main_test.cpp
         thread_scratchpad.cpp
         thread_scratchpad.h)
-target_link_libraries(microsynthTest common portaudio)
+target_link_libraries(microsynthTest common portaudio ncurses)
 target_include_directories(microsynthTest PRIVATE "../common")
 target_include_directories(microsynthTest PRIVATE "../portaudio_${TargetArch}/include")

@@ -47,7 +47,7 @@ namespace microsynth {
         for (size_t i = 0; i < frames_per_buf; i++) {
             *out++ = data->sine[data->left_phase];
             *out++ = data->sine[data->right_phase];
-            data->left_phase += 1;
+            data->left_phase += 3;
             if (data->left_phase >= TABLE_SIZE) data->left_phase -= TABLE_SIZE;
             data->right_phase += 3;
             if (data->right_phase >= TABLE_SIZE) data->right_phase -= TABLE_SIZE;

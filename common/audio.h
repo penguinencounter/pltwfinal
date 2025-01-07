@@ -21,6 +21,7 @@ namespace microsynth {
             float sine[TABLE_SIZE];
             int left_phase;
             int right_phase;
+            int pulse;
         };
 
         pa_userdata data{
@@ -28,6 +29,7 @@ namespace microsynth {
             .sine = {},
             .left_phase = 0,
             .right_phase = 0,
+            .pulse = 0,
         };
         PaStream *stream{};
 
