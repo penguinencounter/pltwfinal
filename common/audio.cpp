@@ -12,9 +12,10 @@
 
 namespace microsynth
 {
-    void QueueSFXCommand::run(pa_userdata& data)
+    void QueueSFXCommand::run(pa_userdata* data) const
     {
-        data.running.push_back(std::move(q));
+        std::cout << "doing the thing\n";
+        data->running.push_back(q);
     }
 
     QueueSFXCommand::QueueSFXCommand(const QueueSFXCommand& from): q(from.q)
@@ -84,12 +85,12 @@ namespace microsynth
         // first, process all the actions
         if (data->queue_ptr)
         {
-            action_queue q = *data->queue_ptr;
-            while (!q.empty())
+            action_queue* q = data->queue_ptr;
+            while (!q->empty())
             {
-                ActionCommand& a = q.front();
-                a.run(*data);
-                q.pop();
+                auto& a = q->front();
+                a->run(data);
+                q->pop();
             }
         }
 
@@ -103,8 +104,9 @@ namespace microsynth
             float value = 0.0;
             for (size_t j = 0; j < run_size; j++)
             {
-                std::shared_ptr<queueable> q = data->running[j];
+                const std::shared_ptr<queueable> q = data->running[j];
                 value += q->repeat[static_cast<std::ptrdiff_t>(q->position)];
+                if (++q->position >= q->length) q->position = 0;
             }
             if (value > 1.0f) value = 1.0f;
             if (value < -1.0f) value = -1.0f;
@@ -145,5 +147,10 @@ namespace microsynth
     AudioDriver::~AudioDriver()
     {
         finalize();
+    }
+
+    void AudioDriver::enqueue(const std::shared_ptr<ActionCommand> action)
+    {
+        actions.push(action);
     }
 }

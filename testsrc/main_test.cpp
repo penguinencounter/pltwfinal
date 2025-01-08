@@ -30,31 +30,15 @@ namespace Tuning = microsynth::A440;
 int main() {
     std::cout << "hello from c++" << __cplusplus << "!\n";
     microsynth::AudioDriver driver {};
-    sleep_for(std::chrono::seconds(3));
-    driver.finalize();
 
     microsynth::SignalGenerators sig_gen {};
     constexpr int sampleRate = 44100;
 
     sig_gen.setSampleRate(sampleRate);
 
-    std::unique_ptr that { sig_gen.sawtooth(Tuning::C4) };
+    const std::shared_ptr that { sig_gen.sine(Tuning::C4, 0.5) };
+    driver.enqueue(std::make_shared<microsynth::QueueSFXCommand>(microsynth::QueueSFXCommand {that}));
 
-    // std::cout << "[\n";
-    for (size_t i = 0; i < sampleRate; i++) {
-        std::cout << "" << i << ", " << that[i] << "\n";
-    }
-    // std::cout << "]\n";
-
-    // ncurses_preamble();
-    // for (;;) {
-    //     if (kbhit()) {
-    //         printw("acquired the %c\n", static_cast<char>(getch()));
-    //         refresh();
-    //     } else {
-    //         // printw("Nothing yet.\n");
-    //         refresh();
-    //         sleep_for(chrono::milliseconds(10));
-    //     }
-    // }
+    sleep_for(std::chrono::seconds(3));
+    driver.finalize();
 }

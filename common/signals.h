@@ -5,6 +5,7 @@
 #ifndef SIGNALS_H
 #define SIGNALS_H
 #include <memory>
+#include "signalmeta.h"
 
 namespace microsynth
 {
@@ -20,10 +21,6 @@ namespace microsynth
         static constexpr double C5 = 523.2511;
     }
 
-    using signal_fmt = float;
-    using signal_ptr = signal_fmt*;
-    using signal_buf = signal_fmt[];
-
     class SignalGenerators
     {
     private:
@@ -37,11 +34,11 @@ namespace microsynth
 
         [[nodiscard]] size_t getSampleRate() const;
 
-        [[nodiscard]] std::unique_ptr<signal_buf> sine(double freq, double amplitude = 1.0) const;
+        [[nodiscard]] std::unique_ptr<queueable> sine(double freq, double amplitude = 1.0) const;
 
-        [[nodiscard]] std::unique_ptr<signal_buf> square(double freq, double amplitude = 1.0) const;
+        [[nodiscard]] std::unique_ptr<queueable> square(double freq, double amplitude = 1.0) const;
 
-        [[nodiscard]] std::unique_ptr<signal_buf> sawtooth(double freq, double amplitude = 1.0) const;
+        [[nodiscard]] std::unique_ptr<queueable> sawtooth(double freq, double amplitude = 1.0) const;
     };
 }
 

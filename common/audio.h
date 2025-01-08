@@ -7,23 +7,14 @@
 #include <portaudio.h>
 #include <queue>
 #include <vector>
-#include <bits/basic_ios.h>
-#include "signals.h"
+#include "signalmeta.h"
 
 namespace microsynth
 {
     class ActionCommand;
     class AudioDriver;
 
-    using action_queue = std::queue<ActionCommand>;
-
-    struct queueable
-    {
-        unsigned int id;
-        std::shared_ptr<signal_buf> repeat;
-        size_t length;
-        size_t position;
-    };
+    using action_queue = std::queue<std::shared_ptr<ActionCommand>>;
 
     struct pa_userdata
     {
@@ -37,12 +28,13 @@ namespace microsynth
     public:
         virtual ~ActionCommand() = default;
 
-        virtual void run([[maybe_unused]] pa_userdata& data)
+        virtual void run([[maybe_unused]] pa_userdata* data) const
         {
+
         }
     };
 
-    class QueueSFXCommand final : ActionCommand
+    class QueueSFXCommand final : public ActionCommand
     {
     private:
         std::shared_ptr<queueable> q;
@@ -58,7 +50,7 @@ namespace microsynth
 
         QueueSFXCommand(QueueSFXCommand&& from) noexcept;
 
-        void run(pa_userdata& data) override;
+        void run(pa_userdata* data) const override;
 
         ~QueueSFXCommand() override;
     };
@@ -102,6 +94,8 @@ namespace microsynth
         AudioDriver& operator=(const AudioDriver&) = delete;
 
         AudioDriver& operator=(AudioDriver&&) = delete;
+
+        void enqueue(std::shared_ptr<ActionCommand> action);
     };
 }
 

@@ -22,17 +22,21 @@ namespace microsynth {
 
     static constexpr double TAU = 6.283185307179586;
 
-    std::unique_ptr<signal_fmt[]> SignalGenerators::sine(const double freq, const double amplitude) const {
-        auto buf = std::make_unique<signal_fmt[]>(sampleRate);
+    std::unique_ptr<queueable> SignalGenerators::sine(const double freq, const double amplitude) const {
+        auto buf = std::make_unique<signal_buf>(sampleRate);
         const double w = freq * TAU;
         for (size_t i = 0; i < sampleRate; i++) {
             const double t = static_cast<int>(i) * secondsPerSample;
             buf[i] = static_cast<float>(std::sin(t * w) * amplitude);
         }
-        return buf;
+        return std::make_unique<queueable>(queueable {
+            .repeat = std::move(buf),
+            .length = sampleRate,
+            .position = 0
+        });
     }
 
-    std::unique_ptr<signal_buf> SignalGenerators::square(const double freq, const double amplitude) const {
+    std::unique_ptr<queueable> SignalGenerators::square(const double freq, const double amplitude) const {
         auto buf = std::make_unique<signal_buf>(sampleRate);
         const double term = 1 / (2 * freq);
         double last_toggle = 0.0;
@@ -45,10 +49,14 @@ namespace microsynth {
             }
             buf[i] = static_cast<float>(toggle ? amplitude : -amplitude);
         }
-        return buf;
+        return std::make_unique<queueable>(queueable {
+            .repeat = std::move(buf),
+            .length = sampleRate,
+            .position = 0
+        });
     }
 
-    std::unique_ptr<signal_buf> SignalGenerators::sawtooth(const double freq, const double amplitude) const {
+    std::unique_ptr<queueable> SignalGenerators::sawtooth(const double freq, const double amplitude) const {
         auto buf = std::make_unique<signal_buf>(sampleRate);
         const int samplesPerPeriod = static_cast<int>(1 / freq * static_cast<int>(sampleRate));
         const double step = 2.0 / samplesPerPeriod;
@@ -58,6 +66,10 @@ namespace microsynth {
             value += step;
             if (value >= 1.0) value = -1.0;
         }
-        return buf;
+        return std::make_unique<queueable>(queueable {
+            .repeat = std::move(buf),
+            .length = sampleRate,
+            .position = 0
+        });
     }
 }
