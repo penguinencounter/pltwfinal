@@ -6,8 +6,10 @@
 #define SIGNALS_H
 #include <memory>
 
-namespace microsynth {
-    namespace A440 {
+namespace microsynth
+{
+    namespace A440
+    {
         static constexpr double C4 = 261.6256;
         static constexpr double D4 = 293.6648;
         static constexpr double E4 = 329.6276;
@@ -19,10 +21,11 @@ namespace microsynth {
     }
 
     using signal_fmt = float;
-    using signal_ptr = signal_fmt *;
+    using signal_ptr = signal_fmt*;
     using signal_buf = signal_fmt[];
 
-    class SignalGenerators {
+    class SignalGenerators
+    {
     private:
         size_t sampleRate = 0;
         double secondsPerSample = 0.0;

@@ -10,70 +10,83 @@
 #include <bits/basic_ios.h>
 #include "signals.h"
 
-namespace microsynth {
+namespace microsynth
+{
+    class ActionCommand;
     class AudioDriver;
 
-    struct queueable {
+    using action_queue = std::queue<ActionCommand>;
+
+    struct queueable
+    {
         unsigned int id;
         std::shared_ptr<signal_buf> repeat;
         size_t length;
         size_t position;
     };
 
-    struct pa_userdata {
-        AudioDriver *that;
+    struct pa_userdata
+    {
+        AudioDriver* that;
         std::vector<std::shared_ptr<queueable>> running{};
+        action_queue* queue_ptr;
     };
 
-    class ActionCommand {
+    class ActionCommand
+    {
     public:
         virtual ~ActionCommand() = default;
 
-        virtual void run([[maybe_unused]] pa_userdata& data) {}
+        virtual void run([[maybe_unused]] pa_userdata& data)
+        {
+        }
     };
 
-    class QueueSFXCommand final : ActionCommand {
+    class QueueSFXCommand final : ActionCommand
+    {
     private:
         std::shared_ptr<queueable> q;
 
     public:
-        explicit QueueSFXCommand(const std::shared_ptr<queueable> &from);
+        explicit QueueSFXCommand(const std::shared_ptr<queueable>& from);
 
-        QueueSFXCommand &operator=(const QueueSFXCommand &from);
+        QueueSFXCommand& operator=(const QueueSFXCommand& from);
 
-        QueueSFXCommand &operator=(QueueSFXCommand &&from) noexcept;
+        QueueSFXCommand& operator=(QueueSFXCommand&& from) noexcept;
 
-        QueueSFXCommand(const QueueSFXCommand &from);
+        QueueSFXCommand(const QueueSFXCommand& from);
 
-        QueueSFXCommand(QueueSFXCommand &&from) noexcept;
+        QueueSFXCommand(QueueSFXCommand&& from) noexcept;
 
         void run(pa_userdata& data) override;
 
         ~QueueSFXCommand() override;
     };
 
-    class AudioDriver {
+    class AudioDriver
+    {
     public:
         static constexpr int SAMPLE_RATE = 44100;
         static constexpr int TABLE_SIZE = 200;
 
     private:
-        std::queue<ActionCommand> actions{};
+        action_queue actions{};
 
         bool finalized{false};
 
         pa_userdata data{
             .that = this,
+            .queue_ptr = &actions
         };
-        PaStream *stream{nullptr};
+        PaStream* stream{nullptr};
 
         static int pa_callback(
-            const void *input_buf,
-            void *output_buf,
+            const void* input_buf,
+            void* output_buf,
             unsigned long frames_per_buf,
-            const PaStreamCallbackTimeInfo *time_info,
+            const PaStreamCallbackTimeInfo* time_info,
             PaStreamCallbackFlags status_flags,
-            void *user_data);
+            void* user_data);
 
     public:
         AudioDriver();
@@ -82,13 +95,13 @@ namespace microsynth {
 
         ~AudioDriver();
 
-        AudioDriver(const AudioDriver &) = delete;
+        AudioDriver(const AudioDriver&) = delete;
 
-        AudioDriver(AudioDriver &&) = delete;
+        AudioDriver(AudioDriver&&) = delete;
 
-        AudioDriver &operator=(const AudioDriver &) = delete;
+        AudioDriver& operator=(const AudioDriver&) = delete;
 
-        AudioDriver &operator=(AudioDriver &&) = delete;
+        AudioDriver& operator=(AudioDriver&&) = delete;
     };
 }
 
