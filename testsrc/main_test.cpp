@@ -41,11 +41,11 @@ int main() {
 
     sig_gen.setSampleRate(sampleRate);
 
-    const std::shared_ptr c4 { sig_gen.sine(Tuning::C4, 0.25) };
+    const std::shared_ptr c4 { sig_gen.sawtooth(Tuning::C4, 0.25) };
     std::cout << "c4 is id " << c4->id << ", ok\n";
-    const std::shared_ptr e4 { sig_gen.sine(Tuning::E4, 0.25) };
+    const std::shared_ptr e4 { sig_gen.sawtooth(Tuning::E4, 0.25) };
     std::cout << "e4 is id " << e4->id << ", ok\n";
-    const std::shared_ptr g4 { sig_gen.sine(Tuning::G4, 0.25) };
+    const std::shared_ptr g4 { sig_gen.sawtooth(Tuning::G4, 0.25) };
     std::cout << "g4 is id " << g4->id << ", ok\n";
 
     driver.enqueue(mkqueue(c4));
