@@ -30,7 +30,6 @@ namespace microsynth
 
         virtual void run([[maybe_unused]] pa_userdata* data) const
         {
-
         }
     };
 

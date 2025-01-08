@@ -1,5 +1,4 @@
 #include <iostream>
-#include "libmicrosynth.h"
 #include "audio.h"
 #include "thread_scratchpad.h"
 #include "signals.h"

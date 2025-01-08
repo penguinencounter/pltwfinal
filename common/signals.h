@@ -4,19 +4,18 @@
 
 #ifndef SIGNALS_H
 #define SIGNALS_H
-#include <iostream>
 #include <memory>
 #include "signalmeta.h"
 
 namespace microsynth
 {
-    template<typename T>
+    template <typename T>
     constexpr T ipow(T value, int times)
     {
         return times <= 0 ? 1 : (value * ipow(value, times - 1));
     }
 
-    template<typename T>
+    template <typename T>
     constexpr T factor(T value, T scaleBy, int times)
     {
         if (times < 0) return value / ipow(scaleBy, -times);
@@ -65,6 +64,8 @@ namespace microsynth
         octaves(A);
         octaves(ASharp);
         octaves(B);
+#undef tone_offset
+#undef octaves
     }
 
     class SignalGenerators

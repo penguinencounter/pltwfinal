@@ -4,5 +4,6 @@
 
 #include "libmicrosynth.h"
 
-namespace microsynth {
+namespace microsynth
+{
 }
