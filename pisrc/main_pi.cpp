@@ -5,11 +5,15 @@
 #include "libmicrosynth.h"
 #include "audio.h"
 #include "pi_native.h"
+#include "signals.h"
 
 constexpr int PIN_TEST = 17 /* gpio17/header11 */;
 
 namespace chrono = std::chrono;
 namespace this_thread = std::this_thread;
+
+using microsynth_hw::Hardware;
+namespace Tuning = microsynth::A440;
 
 inline std::string onoff(const int &isItOn) {
     switch (isItOn) {
@@ -19,21 +23,30 @@ inline std::string onoff(const int &isItOn) {
     }
 }
 
+using std::this_thread::sleep_for;
+namespace chrono = std::chrono;
+namespace Tuning = microsynth::A440;
+
+std::shared_ptr<microsynth::QueueSFXCommand> mkqueue(const std::shared_ptr<microsynth::queueable>& it)
+{
+    return std::make_shared<microsynth::QueueSFXCommand>(microsynth::QueueSFXCommand { it });
+}
+
 int main() {
-    // microsynth_hw::init();
-    microsynth::initAudio();
-    std::cout << "Hello, world!\n";
-    std::cout << "There are " << microsynth::countDevices() << " devices." << std::endl;
+    Hardware h {};
+    microsynth::AudioDriver driver {};
+    microsynth::SignalGenerators sig_gen {};
+    std::cout << "Hello from Pi.\n";
 
-    pinMode(PIN_TEST, INPUT);
-    pullUpDnControl(PIN_TEST, PUD_DOWN);
+    const std::shared_ptr c4 { sig_gen.sawtooth(Tuning::C4, 0.25) };
+    const std::shared_ptr e4 { sig_gen.sawtooth(Tuning::E4, 0.25) };
+    const std::shared_ptr g4 { sig_gen.sawtooth(Tuning::G4, 0.25) };
 
-    // I can't noreturn this because it's main and the implied return causes -Werror to have a breakdown
-    // ReSharper disable once CppDFAEndlessLoop
-    for (;;) {
-        std::this_thread::sleep_for(chrono::milliseconds(500));
-        std::cout << "The current state of GPIO 17 is: " << onoff(digitalRead(PIN_TEST)) << std::endl;
-    }
+    driver.enqueue(mkqueue(c4));
+    driver.enqueue(mkqueue(e4));
+    driver.enqueue(mkqueue(g4));
 
+    sleep_for(chrono::seconds(3));
+    driver.finalize();
     return 0;
 }
