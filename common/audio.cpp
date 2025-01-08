@@ -14,7 +14,6 @@ namespace microsynth
 {
     void QueueSFXCommand::run(pa_userdata* data) const
     {
-        std::cout << "doing the thing\n";
         data->running.push_back(q);
     }
 
