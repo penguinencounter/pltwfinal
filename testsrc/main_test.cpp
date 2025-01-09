@@ -31,20 +31,13 @@ std::shared_ptr<microsynth::queue_sfx_command> mkqueue(const std::shared_ptr<mic
     return std::make_shared<microsynth::queue_sfx_command>(microsynth::queue_sfx_command { it });
 }
 
-std::shared_ptr<microsynth::force_stop_sfx_command> mkstop(const std::shared_ptr<microsynth::queueable>& it)
+std::shared_ptr<microsynth::req_stop_sfx_command> mkstop(const std::shared_ptr<microsynth::queueable>& it)
 {
-    return std::make_shared<microsynth::force_stop_sfx_command>(microsynth::force_stop_sfx_command { it });
+    return std::make_shared<microsynth::req_stop_sfx_command>(microsynth::req_stop_sfx_command { it });
 }
 
-int main() {
-    std::cout << "hello from c++" << __cplusplus << "!\n";
-    microsynth::AudioDriver driver {};
-
-    microsynth::SignalGenerators sig_gen {};
-    constexpr int sampleRate = 44100;
-
-    sig_gen.setSampleRate(sampleRate);
-
+[[noreturn]] void scales(microsynth::AudioDriver& driver, const microsynth::SignalGenerators& sig_gen)
+{
     constexpr size_t no_pitches = 9;
     constexpr double pitches[no_pitches] = {
         Tuning::G3,
@@ -75,4 +68,27 @@ int main() {
         sleep_for(chrono::milliseconds(100));
         driver.enqueue(mkstop(clone));
     }
+}
+
+void test_fadeout(microsynth::AudioDriver& driver, const microsynth::SignalGenerators& sig_gen)
+{
+    std::shared_ptr<microsynth::queueable> c = std::shared_ptr(
+        sig_gen.add_tail(sig_gen.square(Tuning::C4, 0.8))
+    );
+    std::cout << *c << "\n";
+    driver.enqueue(mkqueue(c));
+    sleep_for(chrono::milliseconds(500));
+    driver.enqueue(mkstop(c));
+    sleep_for(chrono::milliseconds(1000));
+}
+
+int main() {
+    std::cout << "hello from c++" << __cplusplus << "!\n";
+    microsynth::AudioDriver driver {};
+
+    microsynth::SignalGenerators sig_gen {};
+    constexpr int sampleRate = 44100;
+    sig_gen.setSampleRate(sampleRate);
+
+    test_fadeout(driver, sig_gen);
 }

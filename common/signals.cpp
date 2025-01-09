@@ -82,4 +82,33 @@ namespace microsynth
             .position = 0
         });
     }
+
+    std::unique_ptr<queueable> SignalGenerators::add_tail(const std::unique_ptr<const queueable>& from, const double tail) const
+    {
+        const auto fadeout_steps = static_cast<size_t>(tail * static_cast<double>(sampleRate));
+        const double step_frac = 1.0 / static_cast<double>(fadeout_steps);
+        const size_t origin_length = from->length;
+        auto buf = std::make_unique<signal_buf>(origin_length + fadeout_steps);
+        size_t read_cursor = from->loop_to;
+        double amp = 1.0;
+
+        // Perform copying into the new size of array
+        for (size_t i = 0; i < origin_length; i++)
+            buf[i] = from->buf[static_cast<std::ptrdiff_t>(i)];
+
+        for (size_t i = 0; i < fadeout_steps; i++)
+        {
+            amp -= step_frac;
+            buf[origin_length + i] = static_cast<float>(from->buf[static_cast<std::ptrdiff_t>(read_cursor)] * amp);
+            if (++read_cursor == from->loop_at) read_cursor = from->loop_to;
+        }
+
+        return std::make_unique<queueable>(queueable {
+            .buf = std::move(buf),
+            .length = origin_length + fadeout_steps,
+            .loop_at = from->loop_at,
+            .loop_to = from->loop_to,
+            .position = 0
+        });
+    }
 }

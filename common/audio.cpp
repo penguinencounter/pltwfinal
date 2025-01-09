@@ -97,6 +97,8 @@ namespace microsynth
         if (result != paNoError) std::cerr << construct_pa_error_message(result) << "\n";
     }
 
+    constexpr size_t RMQ_SIZE = 32;
+
     int AudioDriver::pa_callback(
         [[maybe_unused]] const void* input_buf,
         [[maybe_unused]] void* output_buf,
@@ -113,7 +115,7 @@ namespace microsynth
             action_queue* q = data->queue_ptr;
             while (!q->empty())
             {
-                auto& a = q->front();
+                const auto& a = q->front();
                 a->run(data);
                 q->pop();
             }
@@ -125,17 +127,32 @@ namespace microsynth
         for (size_t i = 0; i < frames_per_buf; i++)
         {
             float value = 0.0;
+            unsigned long removal[RMQ_SIZE] {};
+            size_t remove_cur = 0;
             // ReSharper disable once CppUseElementsView
             for (auto& [_, snd] : data->running)
             {
                 const std::shared_ptr<queueable>& q = snd;
+                if (!q->alive)
+                {
+                    if (remove_cur < RMQ_SIZE)
+                        removal[remove_cur++] = q->id;
+                    continue;
+                }
                 value += q->buf[static_cast<std::ptrdiff_t>(q->position)];
-                if (q->use_loop && ++q->position == q->loop_at) q->position = q->loop_to;
+                ++q->position;
+                if (q->use_loop && q->position == q->loop_at) q->position = q->loop_to;
                 if (q->position >= q->length)
                 {
-                    // get rid of it, it's lifetime has run out
-                    data->running.erase(q->id);
+                    q->alive = false;
+                    // queue it for removal if we have space to do that
+                    if (remove_cur < RMQ_SIZE)
+                        removal[remove_cur++] = q->id;
                 }
+            }
+            while (remove_cur > 0)
+            {
+                data->running.erase(removal[--remove_cur]);
             }
             if (value > 1.0f) value = 1.0f;
             if (value < -1.0f) value = -1.0f;

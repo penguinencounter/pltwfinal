@@ -50,4 +50,10 @@ namespace microsynth
     {
         target.id = _next_ID++;
     }
+
+    std::ostream& operator<<(std::ostream& os, queueable const& m)
+    {
+        os << "{clip: " << m.id << " len " << m.length << " (" << m.loop_at << "->" << m.loop_to << ") @ " << m.position << "}";
+        return os;
+    }
 }

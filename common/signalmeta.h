@@ -8,12 +8,13 @@ namespace microsynth
     using signal_ptr = signal_fmt*;
     using signal_buf = signal_fmt[];
 
-    static unsigned long _next_ID = 0;
+    static unsigned long _next_ID = 1;
 
     class queueable
     {
     public:
         [[nodiscard]] std::unique_ptr<queueable> copy() const;
+        friend std::ostream& operator<<(std::ostream& os, queueable const& m);
 
         unsigned long id = _next_ID++;
         std::shared_ptr<signal_buf> buf;
@@ -29,6 +30,7 @@ namespace microsynth
         size_t loop_to;
         size_t position;
         bool use_loop = true;
+        bool alive = true;
     };
 
     /*
