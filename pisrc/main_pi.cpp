@@ -27,9 +27,9 @@ using std::this_thread::sleep_for;
 namespace chrono = std::chrono;
 namespace Tuning = microsynth::A440;
 
-std::shared_ptr<microsynth::QueueSFXCommand> mkqueue(const std::shared_ptr<microsynth::queueable>& it)
+std::shared_ptr<microsynth::queue_sfx_command> mkqueue(const std::shared_ptr<microsynth::queueable>& it)
 {
-    return std::make_shared<microsynth::QueueSFXCommand>(microsynth::QueueSFXCommand { it });
+    return std::make_shared<microsynth::queue_sfx_command>(microsynth::queue_sfx_command { it });
 }
 
 int main() {
