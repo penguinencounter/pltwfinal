@@ -12,49 +12,49 @@
 
 namespace microsynth
 {
-    void QueueSFXCommand::run(pa_userdata* data) const
+    void queue_sfx_command::run(pa_userdata* data) const
     {
         data->running.insert({q->id, q});
     }
 
-    QueueSFXCommand::QueueSFXCommand(const QueueSFXCommand& from): q(from.q)
+    queue_sfx_command::queue_sfx_command(const queue_sfx_command& from): q(from.q)
     {
     }
 
-    QueueSFXCommand::QueueSFXCommand(QueueSFXCommand&& from) noexcept: q(nullptr)
+    queue_sfx_command::queue_sfx_command(queue_sfx_command&& from) noexcept: q(nullptr)
     {
         q = std::move(from.q);
     }
 
-    QueueSFXCommand& QueueSFXCommand::operator=(const QueueSFXCommand& from)
+    queue_sfx_command& queue_sfx_command::operator=(const queue_sfx_command& from)
     {
         if (this == &from) return *this;
         q = from.q;
         return *this;
     }
 
-    QueueSFXCommand& QueueSFXCommand::operator=(QueueSFXCommand&& from) noexcept
+    queue_sfx_command& queue_sfx_command::operator=(queue_sfx_command&& from) noexcept
     {
         q = from.q;
         from.q = nullptr;
         return *this;
     }
 
-    QueueSFXCommand::QueueSFXCommand(const std::shared_ptr<queueable>& from): q(from)
+    queue_sfx_command::queue_sfx_command(const std::shared_ptr<queueable>& from): q(from)
     {
     }
 
-    QueueSFXCommand::~QueueSFXCommand() = default;
+    queue_sfx_command::~queue_sfx_command() = default;
 
-    StopSFXCommand::StopSFXCommand(const unsigned long id): id(id)
+    force_stop_sfx_command::force_stop_sfx_command(const unsigned long id): id(id)
     {
     }
 
-    StopSFXCommand::StopSFXCommand(const std::shared_ptr<queueable>& from): id(from->id)
+    force_stop_sfx_command::force_stop_sfx_command(const std::shared_ptr<queueable>& from): id(from->id)
     {
     }
 
-    void StopSFXCommand::run(pa_userdata* data) const
+    void force_stop_sfx_command::run(pa_userdata* data) const
     {
         data->running.erase(id);
     }
@@ -165,7 +165,7 @@ namespace microsynth
         finalize();
     }
 
-    void AudioDriver::enqueue(const std::shared_ptr<ActionCommand> action)
+    void AudioDriver::enqueue(const std::shared_ptr<action_command> action)
     {
         actions.push(action);
     }

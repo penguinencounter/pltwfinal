@@ -12,10 +12,10 @@
 
 namespace microsynth
 {
-    class ActionCommand;
+    class action_command;
     class AudioDriver;
 
-    using action_queue = std::queue<std::shared_ptr<ActionCommand>>;
+    using action_queue = std::queue<std::shared_ptr<action_command>>;
 
     struct pa_userdata
     {
@@ -24,45 +24,45 @@ namespace microsynth
         action_queue* queue_ptr;
     };
 
-    class ActionCommand
+    class action_command
     {
     public:
-        virtual ~ActionCommand() = default;
+        virtual ~action_command() = default;
 
         virtual void run([[maybe_unused]] pa_userdata* data) const
         {
         }
     };
 
-    class QueueSFXCommand final : public ActionCommand
+    class queue_sfx_command final : public action_command
     {
     private:
         std::shared_ptr<queueable> q;
 
     public:
-        explicit QueueSFXCommand(const std::shared_ptr<queueable>& from);
+        explicit queue_sfx_command(const std::shared_ptr<queueable>& from);
 
-        QueueSFXCommand& operator=(const QueueSFXCommand& from);
+        queue_sfx_command& operator=(const queue_sfx_command& from);
 
-        QueueSFXCommand& operator=(QueueSFXCommand&& from) noexcept;
+        queue_sfx_command& operator=(queue_sfx_command&& from) noexcept;
 
-        QueueSFXCommand(const QueueSFXCommand& from);
+        queue_sfx_command(const queue_sfx_command& from);
 
-        QueueSFXCommand(QueueSFXCommand&& from) noexcept;
+        queue_sfx_command(queue_sfx_command&& from) noexcept;
 
         void run(pa_userdata* data) const override;
 
-        ~QueueSFXCommand() override;
+        ~queue_sfx_command() override;
     };
 
-    class StopSFXCommand final : public ActionCommand
+    class force_stop_sfx_command final : public action_command
     {
     private:
         unsigned long id;
 
     public:
-        explicit StopSFXCommand(unsigned long id);
-        explicit StopSFXCommand(const std::shared_ptr<queueable>& from);
+        explicit force_stop_sfx_command(unsigned long id);
+        explicit force_stop_sfx_command(const std::shared_ptr<queueable>& from);
 
         void run(pa_userdata* data) const override;
     };
@@ -107,7 +107,7 @@ namespace microsynth
 
         AudioDriver& operator=(AudioDriver&&) = delete;
 
-        void enqueue(std::shared_ptr<ActionCommand> action);
+        void enqueue(std::shared_ptr<action_command> action);
 
         pa_userdata& getuserdata() { return data; }
     };
