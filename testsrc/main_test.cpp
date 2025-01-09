@@ -31,6 +31,11 @@ std::shared_ptr<microsynth::QueueSFXCommand> mkqueue(const std::shared_ptr<micro
     return std::make_shared<microsynth::QueueSFXCommand>(microsynth::QueueSFXCommand { it });
 }
 
+std::shared_ptr<microsynth::StopSFXCommand> mkstop(const std::shared_ptr<microsynth::queueable>& it)
+{
+    return std::make_shared<microsynth::StopSFXCommand>(microsynth::StopSFXCommand { it });
+}
+
 int main() {
     std::cout << "hello from c++" << __cplusplus << "!\n";
     microsynth::AudioDriver driver {};
@@ -40,17 +45,34 @@ int main() {
 
     sig_gen.setSampleRate(sampleRate);
 
-    const std::shared_ptr c4 { sig_gen.sawtooth(Tuning::C4, 0.25) };
-    std::cout << "c4 is id " << c4->id << ", ok\n";
-    const std::shared_ptr e4 { sig_gen.sawtooth(Tuning::E4, 0.25) };
-    std::cout << "e4 is id " << e4->id << ", ok\n";
-    const std::shared_ptr g4 { sig_gen.sawtooth(Tuning::G4, 0.25) };
-    std::cout << "g4 is id " << g4->id << ", ok\n";
+    constexpr size_t no_pitches = 9;
+    constexpr double pitches[no_pitches] = {
+        Tuning::G3,
+        Tuning::A3,
+        Tuning::B3,
+        Tuning::C4,
+        Tuning::D4,
+        Tuning::E4,
+        Tuning::FSharp4,
+        Tuning::G4,
+        Tuning::A4,
+    };
 
-    driver.enqueue(mkqueue(c4));
-    driver.enqueue(mkqueue(e4));
-    driver.enqueue(mkqueue(g4));
+    std::shared_ptr<microsynth::queueable> pitch_actions[no_pitches];
+    for (size_t i = 0; i < no_pitches; i++)
+        pitch_actions[i] = std::shared_ptr(sig_gen.square(pitches[i], 0.33));
 
-    sleep_for(std::chrono::seconds(3));
-    driver.finalize();
+    bool direction = true;
+    int i = 0;
+
+    for (;;)
+    {
+        i += direction ? 1 : -1;
+        if (i == 0) direction = !direction;
+        if (i == no_pitches - 1) direction = !direction;
+        const auto clone = std::shared_ptr(pitch_actions[i]->copy());
+        driver.enqueue(mkqueue(clone));
+        sleep_for(chrono::milliseconds(100));
+        driver.enqueue(mkstop(clone));
+    }
 }

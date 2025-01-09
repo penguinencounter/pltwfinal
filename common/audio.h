@@ -4,6 +4,7 @@
 
 #ifndef AUDIO_H
 #define AUDIO_H
+#include <unordered_map>
 #include <portaudio.h>
 #include <queue>
 #include <vector>
@@ -19,7 +20,7 @@ namespace microsynth
     struct pa_userdata
     {
         AudioDriver* that;
-        std::vector<std::shared_ptr<queueable>> running{};
+        std::unordered_map<unsigned long, std::shared_ptr<queueable>> running{};
         action_queue* queue_ptr;
     };
 
@@ -52,6 +53,18 @@ namespace microsynth
         void run(pa_userdata* data) const override;
 
         ~QueueSFXCommand() override;
+    };
+
+    class StopSFXCommand final : public ActionCommand
+    {
+    private:
+        unsigned long id;
+
+    public:
+        explicit StopSFXCommand(unsigned long id);
+        explicit StopSFXCommand(const std::shared_ptr<queueable>& from);
+
+        void run(pa_userdata* data) const override;
     };
 
     class AudioDriver
@@ -95,6 +108,8 @@ namespace microsynth
         AudioDriver& operator=(AudioDriver&&) = delete;
 
         void enqueue(std::shared_ptr<ActionCommand> action);
+
+        pa_userdata& getuserdata() { return data; }
     };
 }
 

@@ -14,7 +14,7 @@ namespace microsynth
 {
     void QueueSFXCommand::run(pa_userdata* data) const
     {
-        data->running.push_back(q);
+        data->running.insert({q->id, q});
     }
 
     QueueSFXCommand::QueueSFXCommand(const QueueSFXCommand& from): q(from.q)
@@ -45,6 +45,19 @@ namespace microsynth
     }
 
     QueueSFXCommand::~QueueSFXCommand() = default;
+
+    StopSFXCommand::StopSFXCommand(const unsigned long id): id(id)
+    {
+    }
+
+    StopSFXCommand::StopSFXCommand(const std::shared_ptr<queueable>& from): id(from->id)
+    {
+    }
+
+    void StopSFXCommand::run(pa_userdata* data) const
+    {
+        data->running.erase(id);
+    }
 
 
     std::string construct_pa_error_message(const PaError pa_error, const char* const tag = nullptr)
@@ -96,16 +109,20 @@ namespace microsynth
         // because we're stereo, this is interleaved
         auto* out = static_cast<float*>(output_buf);
 
-        size_t run_size = data->running.size();
-
         for (size_t i = 0; i < frames_per_buf; i++)
         {
             float value = 0.0;
-            for (size_t j = 0; j < run_size; j++)
+            // ReSharper disable once CppUseElementsView
+            for (auto& [_, snd] : data->running)
             {
-                const std::shared_ptr<queueable> q = data->running[j];
-                value += q->repeat[static_cast<std::ptrdiff_t>(q->position)];
-                if (++q->position >= q->length) q->position = 0;
+                const std::shared_ptr<queueable>& q = snd;
+                value += q->buf[static_cast<std::ptrdiff_t>(q->position)];
+                if (q->use_loop && ++q->position == q->loop_at) q->position = q->loop_to;
+                if (q->position >= q->length)
+                {
+                    // get rid of it, it's lifetime has run out
+                    data->running.erase(q->id);
+                }
             }
             if (value > 1.0f) value = 1.0f;
             if (value < -1.0f) value = -1.0f;

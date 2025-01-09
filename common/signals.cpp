@@ -36,8 +36,10 @@ namespace microsynth
             buf[i] = static_cast<float>(std::sin(frac * TAU) * amplitude);
         }
         return std::make_unique<queueable>(queueable{
-            .repeat = std::move(buf),
+            .buf = std::move(buf),
             .length = period_steps,
+            .loop_at = period_steps,
+            .loop_to = 0,
             .position = 0
         });
     }
@@ -52,8 +54,10 @@ namespace microsynth
             buf[i] = static_cast<float>(frac <= 0.5 ? amplitude : -amplitude);
         }
         return std::make_unique<queueable>(queueable{
-            .repeat = std::move(buf),
+            .buf = std::move(buf),
             .length = period_steps,
+            .loop_at = period_steps,
+            .loop_to = 0,
             .position = 0
         });
     }
@@ -71,8 +75,10 @@ namespace microsynth
             // if (value >= 1.0) value = -1.0;
         }
         return std::make_unique<queueable>(queueable{
-            .repeat = std::move(buf),
+            .buf = std::move(buf),
             .length = period_steps,
+            .loop_at = period_steps,
+            .loop_to = 0,
             .position = 0
         });
     }
