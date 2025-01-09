@@ -59,6 +59,19 @@ namespace microsynth
         data->running.erase(id);
     }
 
+    req_stop_sfx_command::req_stop_sfx_command(const unsigned long id): id(id)
+    {
+    }
+
+    req_stop_sfx_command::req_stop_sfx_command(const std::shared_ptr<queueable>& from): id(from->id)
+    {
+    }
+
+    void req_stop_sfx_command::run(pa_userdata* data) const
+    {
+        data->running.at(id)->use_loop = false;
+    }
+
 
     std::string construct_pa_error_message(const PaError pa_error, const char* const tag = nullptr)
     {

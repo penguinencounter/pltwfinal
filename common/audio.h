@@ -67,6 +67,19 @@ namespace microsynth
         void run(pa_userdata* data) const override;
     };
 
+    class req_stop_sfx_command final : public action_command
+    {
+    private:
+        unsigned long id;
+
+    public:
+        explicit req_stop_sfx_command(unsigned long id);
+        explicit req_stop_sfx_command(const std::shared_ptr<queueable>& from);
+
+        void run(pa_userdata* data) const override;
+    };
+
+
     class AudioDriver
     {
     public:
