@@ -1,6 +1,7 @@
 #ifndef SIGNALMETA_H
 #define SIGNALMETA_H
 #include <memory>
+#include <portaudio.h>
 
 namespace microsynth
 {
