@@ -22,6 +22,9 @@ namespace microsynth
         AudioDriver* that;
         std::unordered_map<unsigned long, std::shared_ptr<queueable>> running{};
         action_queue* queue_ptr;
+
+        // Global Controls;
+        float master_volume;
     };
 
     class action_command
@@ -79,6 +82,16 @@ namespace microsynth
         void run(pa_userdata* data) const override;
     };
 
+    class set_volume_command final : public action_command
+    {
+    private:
+        float new_volume;
+
+    public:
+        explicit set_volume_command(float volume);
+
+        void run(pa_userdata* data) const override;
+    };
 
     class AudioDriver
     {
@@ -93,7 +106,8 @@ namespace microsynth
 
         pa_userdata data{
             .that = this,
-            .queue_ptr = &actions
+            .queue_ptr = &actions,
+            .master_volume = 1.0f
         };
         PaStream* stream{nullptr};
 

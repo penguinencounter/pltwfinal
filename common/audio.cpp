@@ -76,6 +76,14 @@ namespace microsynth
             data->running.erase(id);
     }
 
+    set_volume_command::set_volume_command(float volume) : new_volume(volume)
+    {
+    }
+
+    void set_volume_command::run(pa_userdata* data) const
+    {
+        data->master_volume = new_volume;
+    }
 
     std::string construct_pa_error_message(const PaError pa_error, const char* const tag = nullptr)
     {
@@ -163,8 +171,8 @@ namespace microsynth
             }
             if (value > 1.0f) value = 1.0f;
             if (value < -1.0f) value = -1.0f;
-            *out++ = value;
-            *out++ = value;
+            *out++ = value * data->master_volume;
+            *out++ = value * data->master_volume;
         }
         return paContinue;
     }
