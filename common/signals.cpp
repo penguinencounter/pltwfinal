@@ -38,9 +38,11 @@ namespace microsynth
         return std::make_unique<queueable>(queueable{
             .buf = std::move(buf),
             .length = period_steps,
-            .loop_at = period_steps,
-            .loop_to = 0,
-            .position = 0
+            .capabilities = {
+                .looping = true,
+                .loop_at = period_steps,
+                .loop_to = 0
+            },
         });
     }
 
@@ -56,9 +58,11 @@ namespace microsynth
         return std::make_unique<queueable>(queueable{
             .buf = std::move(buf),
             .length = period_steps,
-            .loop_at = period_steps,
-            .loop_to = 0,
-            .position = 0
+            .capabilities = {
+                .looping = true,
+                .loop_at = period_steps,
+                .loop_to = 0
+            },
         });
     }
 
@@ -77,9 +81,11 @@ namespace microsynth
         return std::make_unique<queueable>(queueable{
             .buf = std::move(buf),
             .length = period_steps,
-            .loop_at = period_steps,
-            .loop_to = 0,
-            .position = 0
+            .capabilities = {
+                .looping = true,
+                .loop_at = period_steps,
+                .loop_to = 0
+            },
         });
     }
 
@@ -89,7 +95,7 @@ namespace microsynth
         const double step_frac = 1.0 / static_cast<double>(fadeout_steps);
         const size_t origin_length = from->length;
         auto buf = std::make_unique<signal_buf>(origin_length + fadeout_steps);
-        size_t read_cursor = from->loop_to;
+        size_t read_cursor = from->capabilities.loop_to;
         double amp = 1.0;
 
         // Perform copying into the new size of array
@@ -100,15 +106,17 @@ namespace microsynth
         {
             amp -= step_frac;
             buf[origin_length + i] = static_cast<float>(from->buf[static_cast<std::ptrdiff_t>(read_cursor)] * amp);
-            if (++read_cursor == from->loop_at) read_cursor = from->loop_to;
+            if (++read_cursor == from->capabilities.loop_at) read_cursor = from->capabilities.loop_to;
         }
 
         return std::make_unique<queueable>(queueable {
             .buf = std::move(buf),
             .length = origin_length + fadeout_steps,
-            .loop_at = from->loop_at,
-            .loop_to = from->loop_to,
-            .position = 0
+            .capabilities = {
+                .looping = true,
+                .loop_at = from->capabilities.loop_at,
+                .loop_to = 0
+            },
         });
     }
 }

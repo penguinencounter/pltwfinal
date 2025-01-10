@@ -69,7 +69,11 @@ namespace microsynth
 
     void req_stop_sfx_command::run(pa_userdata* data) const
     {
-        data->running.at(id)->use_loop = false;
+        std::shared_ptr<queueable>& qref = data->running.at(id);
+        if (qref->capabilities.looping)
+            qref->player_state.looping = false;
+        else // just delete it, it would play out in full anyway (e.g. stingers, Rick Astley's Never Gonna Give You Up)
+            data->running.erase(id);
     }
 
 
@@ -133,18 +137,21 @@ namespace microsynth
             for (auto& [_, snd] : data->running)
             {
                 const std::shared_ptr<queueable>& q = snd;
-                if (!q->alive)
+                // wow, bindings!!!
+                auto& [looping, position, alive] = q->player_state;
+                auto& [can_loop, loop_at, loop_to] = q->capabilities;
+                if (!alive)
                 {
                     if (remove_cur < RMQ_SIZE)
                         removal[remove_cur++] = q->id;
                     continue;
                 }
-                value += q->buf[static_cast<std::ptrdiff_t>(q->position)];
-                ++q->position;
-                if (q->use_loop && q->position == q->loop_at) q->position = q->loop_to;
-                if (q->position >= q->length)
+                value += q->buf[static_cast<std::ptrdiff_t>(position)];
+                ++position;
+                if (looping && position == loop_at) position = loop_to;
+                if (position >= q->length)
                 {
-                    q->alive = false;
+                    alive = false;
                     // queue it for removal if we have space to do that
                     if (remove_cur < RMQ_SIZE)
                         removal[remove_cur++] = q->id;

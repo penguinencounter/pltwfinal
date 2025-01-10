@@ -101,6 +101,7 @@ void test_fadeout(microsynth::AudioDriver& driver, const microsynth::SignalGener
 void test_read(microsynth::AudioDriver& driver, const microsynth::SignalGenerators&)
 {
     std::shared_ptr c = extras::import_wav("astley.priv.wav");
+    std::cout << "Loaded clip: " << *c << "!\n";
     driver.enqueue(mkqueue(c));
     sleep_for(chrono::seconds(11));
 }

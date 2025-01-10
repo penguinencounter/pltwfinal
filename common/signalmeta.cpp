@@ -1,6 +1,7 @@
 #include "signalmeta.h"
 
 #include <iostream>
+#include <sstream>
 
 
 namespace microsynth
@@ -28,9 +29,8 @@ namespace microsynth
         return std::make_unique<queueable>(queueable{
             .buf = this->buf,
             .length = this->length,
-            .loop_at = this->loop_at,
-            .loop_to = this->loop_to,
-            .position = 0
+            .capabilities = this->capabilities // copy
+            // (discards the runtime state, though...)
         });
     }
 
@@ -53,7 +53,8 @@ namespace microsynth
 
     std::ostream& operator<<(std::ostream& os, queueable const& m)
     {
-        os << "{clip: " << m.id << " len " << m.length << " (" << m.loop_at << "->" << m.loop_to << ") @ " << m.position << "}";
-        return os;
+        std::stringstream collect {};
+        collect << "{" << m.id << "}";
+        return os << collect.str();
     }
 }

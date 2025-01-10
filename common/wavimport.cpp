@@ -33,10 +33,9 @@ namespace extras
         return std::make_unique<queueable>(queueable{
             .buf = std::move(buf),
             .length = out_buffer_size,
-            .loop_at = out_buffer_size,
-            .loop_to = 0,
-            .position = 0,
-            .use_loop = false,
+            .capabilities = {
+                .looping = false
+            }
         });
     }
 }
