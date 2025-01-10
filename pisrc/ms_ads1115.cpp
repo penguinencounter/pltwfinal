@@ -101,7 +101,9 @@ namespace microsynth_hw
 
     std::int16_t ms_ads1115::analog_read(const std::uint8_t channel) const
     {
-        spinfetch();
+        if ((last_synced >> 12 & 0b111) != (channel | 0b100))
+            // the next fetch is the wrong data
+            spinfetch();
         if (write_conf_raw(
             (last_synced & (0b0000111111111111)) // clear channel, OS
             | (channel & 0b11) << 12 // set the channel
