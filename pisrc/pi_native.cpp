@@ -28,6 +28,12 @@ namespace microsynth_hw {
     {
     }
 
+    communication_failure::communication_failure(const std::string& extra): runtime_error(
+        "Communication failure: " + extra
+        )
+    {
+    }
+
     Hardware::Hardware() {
         wiringPiSetupGpio();
     }

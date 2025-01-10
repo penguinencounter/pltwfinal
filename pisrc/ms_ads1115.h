@@ -27,6 +27,7 @@ namespace microsynth_hw
             // high bit (15)
             // Operational status (is the chip doing something??)
             // Write a 1 to start a conversion when we aren't doing anything
+            // If 1, in use - otherwise, not (opposite of datasheet)
             bool status_set;
 
             // 14:12
@@ -88,6 +89,7 @@ namespace microsynth_hw
 
             [[nodiscard]] std::uint16_t pack() const;
             static conf unpack(std::uint16_t value);
+            friend std::ostream& operator<<(std::ostream& os, const conf& val);
         };
 
         csi ADDR_GND = 0b1001000;
@@ -117,7 +119,6 @@ namespace microsynth_hw
         [[nodiscard]] std::int16_t get_conversion() const;
 
         int pulse() const;
-    private:
         void spinfetch() const;
 
     public:

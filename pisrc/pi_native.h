@@ -12,6 +12,7 @@ namespace microsynth_hw {
     {
     public:
         communication_failure();
+        explicit communication_failure(const std::string& extra);
     };
 
     class Hardware {
