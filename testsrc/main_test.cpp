@@ -90,9 +90,7 @@ std::shared_ptr<microsynth::req_stop_sfx_command> mkstop(const std::shared_ptr<m
 
 void test_fadeout(microsynth::AudioDriver& driver, const microsynth::SignalGenerators& sig_gen)
 {
-    std::shared_ptr<microsynth::queueable> c = std::shared_ptr(
-        sig_gen.add_tail(sig_gen.square(Tuning::C4, 0.8))
-    );
+    std::shared_ptr c = sig_gen.add_tail(sig_gen.square(Tuning::C4, 0.8));
     std::cout << *c << "\n";
     driver.enqueue(mkqueue(c));
     sleep_for(chrono::milliseconds(500));
@@ -100,9 +98,11 @@ void test_fadeout(microsynth::AudioDriver& driver, const microsynth::SignalGener
     sleep_for(chrono::milliseconds(1000));
 }
 
-void test_read()
+void test_read(microsynth::AudioDriver& driver, const microsynth::SignalGenerators&)
 {
-    static_cast<void>(extras::import_wav("astley.priv.wav"));
+    std::shared_ptr c = extras::import_wav("astley.priv.wav");
+    driver.enqueue(mkqueue(c));
+    sleep_for(chrono::seconds(11));
 }
 
 int main() {
@@ -114,5 +114,5 @@ int main() {
     sig_gen.setSampleRate(sampleRate);
 
     // test_fadeout(driver, sig_gen);
-    test_read();
+    test_read(driver, sig_gen);
 }
