@@ -5,6 +5,24 @@
 #include <iomanip>
 #include <ncurses.h>
 
+#include "wavimport.h"
+
+struct WAVE_HEADER {
+    char Chunk[4];
+    int ChunkSize;
+    char format[4];
+    char Sub_chunk1ID[4];
+    int Sub_chunk1Size;
+    short int AudioFormat;
+    short int NumChannels;
+    int SampleRate;
+    int ByteRate;
+    short int BlockAlign;
+    short int BitsPerSample;
+    char Sub_chunk2ID[4];
+    int Sub_chunk2Size;
+};
+
 int kbhit() {
     int ch = getch();
     if (ch != ERR) {
@@ -82,6 +100,11 @@ void test_fadeout(microsynth::AudioDriver& driver, const microsynth::SignalGener
     sleep_for(chrono::milliseconds(1000));
 }
 
+void test_read()
+{
+    static_cast<void>(extras::import_wav("astley.priv.wav"));
+}
+
 int main() {
     std::cout << "hello from c++" << __cplusplus << "!\n";
     microsynth::AudioDriver driver {};
@@ -90,5 +113,6 @@ int main() {
     constexpr int sampleRate = 44100;
     sig_gen.setSampleRate(sampleRate);
 
-    test_fadeout(driver, sig_gen);
+    // test_fadeout(driver, sig_gen);
+    test_read();
 }

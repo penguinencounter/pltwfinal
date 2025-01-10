@@ -4,6 +4,7 @@ message("common arch: ${TargetArch} in ${CMAKE_SOURCE_DIR}")
 add_library(common STATIC
         libmicrosynth.h libmicrosynth.cpp audio.h audio.cpp
         signals.h signals.cpp signalmeta.h signalmeta.cpp
+        wavimport.cpp wavimport.h
         helpers.h)
 #target_link_libraries(portaudio)
 
