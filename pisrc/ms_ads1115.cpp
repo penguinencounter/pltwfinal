@@ -106,9 +106,6 @@ namespace microsynth_hw {
         if ((last_synced >> 12 & 0b111) != (channel | 0b100))
             // the next fetch is the wrong data, so we need to wait to clear it out
             spinfetch();
-        std::uint16_t new_conf = (last_synced & (0b0000111111111111)) // clear channel, OS
-                                 | (channel & 0b11) << 12 // set the channel
-                                 | (0b1100000000000000);
         if (write_conf_raw(
                 (last_synced & (0b0000111111111111)) // clear channel, OS
                 | (channel & 0b11) << 12 // set the channel
