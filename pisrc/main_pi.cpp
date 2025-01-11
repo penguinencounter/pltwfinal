@@ -38,9 +38,9 @@ std::shared_ptr<microsynth::queue_sfx_command> mkqueue(const std::shared_ptr<mic
 }
 
 void configure_adc(ms_ads1115& adc) {
-    std::cout << "\033[92,1mConfiguring ADC...\033[0m\n" << std::flush;
+    std::cout << "\033[92;1mConfiguring ADC...\033[0m\n" << std::flush;
     adc.pull_conf();
-    std::cout << "\033[93mcurrent ADC options: " << adc.current_configuration << "\033[0m\n";
+    std::cout << "\033[93m Pre-configuration: " << adc.current_configuration << "\033[0m\n";
     ms_ads1115::conf adc_conf = adc.current_configuration;
     adc_conf.data_rate = ms_ads1115::conf::DATA_RATE_8;
     adc_conf.pga = ms_ads1115::conf::PGA_4_096V;
@@ -49,10 +49,10 @@ void configure_adc(ms_ads1115& adc) {
     adc_conf.comp_qd = ms_ads1115::conf::COMP_QD_NOCOMP; // no alert
     if (adc.write_conf(adc_conf) < 0) throw microsynth_hw::communication_failure("failed to write initial configuration to ADC");
     adc.pull_conf();
-    std::cout << "\033[93mnew ADC options: " << adc.current_configuration << "\033[0m\n";
-    std::cout << "checking... " << std::flush;
+    std::cout << "\033[93m After configuration: " << adc.current_configuration << "\033[0m\n";
+    std::cout << "\033[93;1mchecking... \033[0m" << std::flush;
     adc.spinfetch();
-    std::cout << "\033[92mlooks good\033[0m\n" << std::flush;
+    std::cout << "\033[92mOK\033[0m\n" << std::flush;
 }
 
 int main_wrap()
