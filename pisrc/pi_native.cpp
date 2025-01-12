@@ -17,9 +17,6 @@ namespace this_thread = std::this_thread;
 namespace chrono = std::chrono;
 
 namespace microsynth_hw {
-    // *inclusivity!*
-    constexpr int I2C_SWITCH_DEVICE = 0x0703;
-
     void worker(const int tid) {
         std::cout << "hi from thread " << tid << std::endl;
     }
