@@ -3,7 +3,7 @@
 #include <functional>
 #include <ostream>
 #include <wiringPi.h>
-#include <c++/11/iostream>
+#include <iostream>
 #include <linux/gpio.h>
 
 namespace microsynth_hw {
