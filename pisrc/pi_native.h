@@ -4,7 +4,6 @@
 
 #ifndef PI_NATIVE_H
 #define PI_NATIVE_H
-#include <exception>
 #include <stdexcept>
 
 namespace microsynth_hw {

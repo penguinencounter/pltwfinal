@@ -8,6 +8,7 @@
 #include "pi_native.h"
 #include "signals.h"
 #include "wavimport.h"
+#include "keyboard.h"
 
 constexpr int PIN_TEST = 17 /* gpio17/header11 */;
 
@@ -58,6 +59,7 @@ void configure_adc(ms_ads1115& adc) {
 int main_wrap()
 {
     Hardware h{};
+    microsynth_hw::Keyboard kbd {};
     [[maybe_unused]] ms_ads1115 adc{h, ms_ads1115::ADDR_GND};
     [[maybe_unused]] microsynth::AudioDriver driver{};
     [[maybe_unused]] microsynth::SignalGenerators sig_gen{};
@@ -70,7 +72,7 @@ int main_wrap()
         std::int16_t value = adc.analog_read(0);
         double fractional_value = static_cast<double>(value) / static_cast<double>(std::numeric_limits<std::int16_t>::max());
         std::cout << "A0: " << fractional_value << std::endl;
-        sleep_for(std::chrono::milliseconds(500));
+        sleep_for(std::chrono::milliseconds(1000));
     }
     return 0;
 }

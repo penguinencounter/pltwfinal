@@ -41,6 +41,7 @@ namespace microsynth_hw {
         public:
             Keyboard* kbptr;
             Keymap::Key key;
+            int pin;
         };
 
         using Key = Keymap::Key;
