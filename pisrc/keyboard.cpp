@@ -47,8 +47,9 @@ namespace microsynth_hw {
         std::size_t i = 0;
         const std::size_t max = keymap.key2gpio.size();
         for (auto& [key, gpio] : keymap.key2gpio) {
+            i++;
             std::stringstream ss {};
-            ss << "\033[93m" << i << " of " << max << "\033[0m";
+            ss << "\r\033[93m" << i << " of " << max << "\033[0m";
             std::cout << std::setw(50) << ss.str() << std::flush;
             auto* data = new wiringpi_isr_userdata {
                 this, key, gpio
