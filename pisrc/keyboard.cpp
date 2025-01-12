@@ -1,6 +1,7 @@
 #include "keyboard.h"
 
 #include <functional>
+#include <iomanip>
 #include <ostream>
 #include <wiringPi.h>
 #include <iostream>
@@ -31,14 +32,24 @@ namespace microsynth_hw {
 
     Keymap Keyboard::keymap{};
 
+    volatile static bool is_in_setup = false;
+
     void isr_handler(void* userdata) {
+        if (is_in_setup) return;
         auto* data = static_cast<Keyboard::wiringpi_isr_userdata*>(userdata);
         bool pressed = digitalRead(data->pin) == LOW;
         std::cout << "update:" << static_cast<std::uint8_t>(data->key) << " on pin " << data->pin  << " " << (pressed ? "pressed" : "released") << std::endl;
     }
 
     Keyboard::Keyboard() {
+        is_in_setup = true;
+        std::cout << "\033[92;1mSetting up keyboard interrupts, this might take a bit...\033[0m" << std::endl;
+        std::size_t i = 0;
+        const std::size_t max = keymap.key2gpio.size();
         for (auto& [key, gpio] : keymap.key2gpio) {
+            std::stringstream ss {};
+            ss << "\033[93m" << i << " of " << max << "\033[0m";
+            std::cout << std::setw(50) << ss.str() << std::flush;
             auto* data = new wiringpi_isr_userdata {
                 this, key, gpio
             };
@@ -48,6 +59,8 @@ namespace microsynth_hw {
             pullUpDnControl(gpio, PUD_UP);
             wiringPiISR(gpio, GPIOEVENT_REQUEST_BOTH_EDGES, isr_handler, data);
         }
+        std::cout << std::endl;
+        is_in_setup = false;
     }
 
     Keyboard::~Keyboard() {
