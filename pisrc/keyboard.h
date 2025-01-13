@@ -28,8 +28,9 @@ namespace microsynth_hw {
 
             OctUp,
             OctDown,
-            Ctrl,
-            Alt
+            Ctrl1,
+            Ctrl2,
+            Ctrl3
         };
         // see constructor for GPIO pins
         std::unordered_map<Key, int> key2gpio;

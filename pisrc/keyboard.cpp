@@ -11,24 +11,25 @@ namespace microsynth_hw {
     using enum Keymap::Key;
 
     Keymap::Keymap(): key2gpio({
-        {C1, 17},
-        {CSharp, 27},
-        {D, 22},
-        {DSharp, 10},
-        {E, 9},
-        {F, 11},
-        {FSharp, 5},
-        {G, 6},
-        {GSharp, 13},
-        {A, 19},
-        {ASharp, 26},
+        {C1, 22},
+        {CSharp, 10},
+        {D, 9},
+        {DSharp, 11},
+        {E, 5},
+        {F, 6},
+        {FSharp, 13},
+        {G, 19},
+        {GSharp, 26},
+        {A, 12},
+        {ASharp, 16},
         {B, 20},
         {C2, 21},
 
-        {OctUp, 23},
-        {OctDown, 24},
-        {Ctrl, 15},
-        {Alt, 18},
+        {OctUp, 17},
+        {OctDown, 27},
+        {Ctrl1, 15},
+        {Ctrl2, 18},
+        {Ctrl3, 23},
     }) {
     }
 
