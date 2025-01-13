@@ -102,7 +102,8 @@ int main_wrap() {
                 microsynth_hw::KeyEvent &ke{event_ptr->value.key};
                 if (ke.kind == microsynth_hw::KeyEvent::Kind::KEY_UP) {
                     std::cout << "Stopping key " << static_cast<std::uint8_t>(ke.key) << "\n";
-                    driver.enqueue(mkreqstop(key_id[ke.key]));
+                    if (key_id.contains(ke.key))
+                        driver.enqueue(mkreqstop(key_id[ke.key]));
                 }
                 else if (ke.kind == microsynth_hw::KeyEvent::Kind::KEY_DOWN) {
                     std::cout << "Example: playing key " << static_cast<std::uint8_t>(ke.key) << "\n";
