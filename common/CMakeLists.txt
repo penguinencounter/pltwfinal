@@ -5,6 +5,7 @@ add_library(common STATIC
         libmicrosynth.h libmicrosynth.cpp audio.h audio.cpp
         signals.h signals.cpp signalmeta.h signalmeta.cpp
         wavimport.cpp wavimport.h
+        threaded_queue.cpp threaded_queue.h
         helpers.h)
 #target_link_libraries(portaudio)
 

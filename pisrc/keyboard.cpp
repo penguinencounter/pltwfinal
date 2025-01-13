@@ -10,17 +10,6 @@
 namespace microsynth_hw {
     using enum Keymap::Key;
 
-    class KeyEvent {
-    public:
-        enum class Kind {
-            KEY_DOWN,
-            KEY_UP
-        };
-
-        Kind kind;
-        Keymap::Key key;
-    };
-
     Keymap::Keymap(): key2gpio({
         {C1, 17},
         {CSharp, 27},

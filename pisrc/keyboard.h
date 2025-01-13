@@ -37,6 +37,17 @@ namespace microsynth_hw {
         Keymap();
     };
 
+    class KeyEvent {
+    public:
+        enum class Kind {
+            KEY_DOWN,
+            KEY_UP
+        };
+
+        Kind kind;
+        Keymap::Key key;
+    };
+
     class Keyboard {
     public:
         class wiringpi_isr_userdata {
@@ -50,6 +61,7 @@ namespace microsynth_hw {
 
         using Key = Keymap::Key;
         static Keymap keymap;
+
 
     private:
         std::vector<wiringpi_isr_userdata*> all_userdata {};
