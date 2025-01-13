@@ -10,6 +10,17 @@
 namespace microsynth_hw {
     using enum Keymap::Key;
 
+    class KeyEvent {
+    public:
+        enum class Kind {
+            KEY_DOWN,
+            KEY_UP
+        };
+
+        Kind kind;
+        Keymap::Key key;
+    };
+
     Keymap::Keymap(): key2gpio({
         {C1, 17},
         {CSharp, 27},
@@ -39,8 +50,12 @@ namespace microsynth_hw {
     void isr_handler(void* userdata) {
         if (is_in_setup) return;
         auto* data = static_cast<Keyboard::wiringpi_isr_userdata*>(userdata);
+        Keyboard* that = data->kbptr;
         bool pressed = digitalRead(data->pin) == LOW;
-        std::cout << "update:" << static_cast<std::uint8_t>(data->key) << " on pin " << data->pin  << " " << (pressed ? "pressed" : "released") << std::endl;
+        if (pressed != that->key_state[data->key]) {
+            std::cout << "update:" << static_cast<std::uint8_t>(data->key) << " on pin " << data->pin  << " " << (pressed ? "pressed" : "released") << std::endl;
+            that->key_state[data->key] = pressed;
+        }
     }
 
     Keyboard::Keyboard() {
@@ -60,6 +75,7 @@ namespace microsynth_hw {
             pinMode(gpio, INPUT);
             // connect to GND to trigger
             pullUpDnControl(gpio, PUD_UP);
+            key_state[key] = digitalRead(gpio) == LOW;
             wiringPiISR(gpio, GPIOEVENT_REQUEST_BOTH_EDGES, isr_handler, data);
         }
         std::cout << "\033[92mdone\033[0m" << std::endl;

@@ -46,6 +46,8 @@ namespace microsynth_hw {
             int pin;
         };
 
+        std::unordered_map<Keymap::Key, bool> key_state {};
+
         using Key = Keymap::Key;
         static Keymap keymap;
 
