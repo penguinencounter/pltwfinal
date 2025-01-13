@@ -27,8 +27,8 @@ namespace microsynth_hw {
 
         {OctUp, 23},
         {OctDown, 24},
-        {Ctrl, 8},
-        {Alt, 7},
+        {Ctrl, 15},
+        {Alt, 18},
     }) {
     }
 
