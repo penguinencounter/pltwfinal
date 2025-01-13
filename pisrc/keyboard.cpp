@@ -49,8 +49,8 @@ namespace microsynth_hw {
         for (auto& [key, gpio] : keymap.key2gpio) {
             i++;
             std::stringstream ss {};
-            ss << "\r\033[93m" << i << " of " << max << "\033[0m";
-            std::cout << std::setw(50) << ss.str() << std::flush;
+            ss << "\r\033[93m" << i << " of " << max << "...\033[0m";
+            std::cout << std::setw(16) << ss.str() << std::flush;
             auto* data = new wiringpi_isr_userdata {
                 this, key, gpio
             };
@@ -60,7 +60,7 @@ namespace microsynth_hw {
             pullUpDnControl(gpio, PUD_UP);
             wiringPiISR(gpio, GPIOEVENT_REQUEST_BOTH_EDGES, isr_handler, data);
         }
-        std::cout << std::endl;
+        std::cout << "\033[92mdone\033[0m" << std::endl;
         is_in_setup = false;
     }
 
