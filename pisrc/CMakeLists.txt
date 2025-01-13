@@ -3,7 +3,14 @@ cmake_minimum_required(VERSION 3.30)
 project(microsynthPi)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic-errors -Wall -Weffc++ -Wextra -Wconversion -Wsign-conversion -Werror")
+
+set(ExtraFlags "")
+if (instrumented)
+    set(ExtraFlags "${ExtraFlags} -pg")
+endif ()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic-errors -Wall -Weffc++ -Wextra -Wconversion -Wsign-conversion -Werror ${ExtraFlags}")
+
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ")
 
 set(TargetArch "aarch")
