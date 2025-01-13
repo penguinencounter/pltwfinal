@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "threaded_queue.h"
+
 // Manages the keyboard. It's a bunch of GPIO pins.
 
 namespace microsynth_hw {
@@ -59,6 +61,7 @@ namespace microsynth_hw {
         };
 
         std::unordered_map<Keymap::Key, bool> key_state {};
+        microsynth::threaded_queue<std::shared_ptr<KeyEvent>> event_queue {};
 
         using Key = Keymap::Key;
         static Keymap keymap;

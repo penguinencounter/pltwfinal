@@ -41,10 +41,14 @@ namespace microsynth_hw {
         if (is_in_setup) return;
         auto* data = static_cast<Keyboard::wiringpi_isr_userdata*>(userdata);
         Keyboard* that = data->kbptr;
-        bool pressed = digitalRead(data->pin) == LOW;
+        const bool pressed = digitalRead(data->pin) == LOW;
         if (pressed != that->key_state[data->key]) {
             std::cout << "update:" << static_cast<std::uint8_t>(data->key) << " on pin " << data->pin  << " " << (pressed ? "pressed" : "released") << std::endl;
             that->key_state[data->key] = pressed;
+            that->event_queue.put(std::make_shared<KeyEvent>(KeyEvent {
+                pressed ? KeyEvent::Kind::KEY_DOWN : KeyEvent::Kind::KEY_UP,
+                data->key
+            }));
         }
     }
 

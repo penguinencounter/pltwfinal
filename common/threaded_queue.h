@@ -13,15 +13,23 @@ namespace microsynth {
         std::condition_variable cv;
 
     public:
-        threaded_queue();
-        ~threaded_queue();
+        threaded_queue(): q(), mu(), cv() {}
+        ~threaded_queue() = default;
 
-        void put(T& t);
+        void put(T t) {
+            std::lock_guard lock(mu);
+            q.push(t);
+            // Notify waiting threads that a new item is available.
+            cv.notify_one();
+        }
 
-        T getWait();
-
-        template <typename T2>
-        [[noreturn]] void stream_to(threaded_queue<T2>& target);
+        T getWait() {
+            std::unique_lock lock(mu);
+            while (q.empty()) cv.wait(lock);
+            T val = q.front();
+            q.pop();
+            return val;
+        }
     };
 }
 

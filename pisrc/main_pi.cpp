@@ -63,15 +63,15 @@ int main_wrap()
     [[maybe_unused]] ms_ads1115 adc{h, ms_ads1115::ADDR_GND};
     [[maybe_unused]] microsynth::AudioDriver driver{};
     [[maybe_unused]] microsynth::SignalGenerators sig_gen{};
-    configure_adc(adc);
+    // configure_adc(adc);
 
-    std::cout << "\033[93mcurrent ADC options: " << adc.fetch_conf() << "\033[0m\n";
+    // std::cout << "\033[93mcurrent ADC options: " << adc.fetch_conf() << "\033[0m\n";
     std::cout << "Hello from Pi.\n";
 
     for (;;) {
-        std::int16_t value = adc.analog_read(0);
-        double fractional_value = static_cast<double>(value) / static_cast<double>(std::numeric_limits<std::int16_t>::max());
-        std::cout << "A0: " << fractional_value << std::endl;
+        // std::int16_t value = adc.analog_read(0);
+        // double fractional_value = static_cast<double>(value) / static_cast<double>(std::numeric_limits<std::int16_t>::max());
+        // std::cout << "A0: " << fractional_value << std::endl;
         sleep_for(std::chrono::milliseconds(1000));
     }
     return 0;

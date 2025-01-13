@@ -24,6 +24,7 @@ add_executable(microsynthPi
         ms_ads1115.cpp ms_ads1115.h
         keyboard.cpp
         keyboard.h
+        event_types.h
 )
 target_link_libraries(microsynthPi wiringPi common portaudio)
 
