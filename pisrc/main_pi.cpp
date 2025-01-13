@@ -37,6 +37,14 @@ std::shared_ptr<microsynth::queue_sfx_command> mkqueue(const std::shared_ptr<mic
     return std::make_shared<microsynth::queue_sfx_command>(microsynth::queue_sfx_command{it});
 }
 
+std::shared_ptr<microsynth::req_stop_sfx_command> mkreqstop(const std::shared_ptr<microsynth::queueable> &it) {
+    return std::make_shared<microsynth::req_stop_sfx_command>(microsynth::req_stop_sfx_command{it});
+}
+
+std::shared_ptr<microsynth::req_stop_sfx_command> mkreqstop(unsigned long it) {
+    return std::make_shared<microsynth::req_stop_sfx_command>(microsynth::req_stop_sfx_command{it});
+}
+
 void configure_adc(ms_ads1115 &adc) {
     std::cout << "\033[92;1mConfiguring ADC...\033[0m\n" << std::flush;
     adc.pull_conf();
@@ -78,22 +86,36 @@ int main_wrap() {
 
     microsynth::threaded_queue<std::shared_ptr<microsynth_hw::event> > all_queue{};
     std::thread key_queue_proc{
-        [&] { wrap_and_transfer<microsynth_hw::KeyEvent>(microsynth_hw::event::type_::Key, kbd.event_queue, all_queue); }
+        [&] {
+            wrap_and_transfer<microsynth_hw::KeyEvent>(microsynth_hw::event::type_::Key, kbd.event_queue, all_queue);
+        }
     };
-    // std::thread key_queue_2 {
-    //     wrap_and_transfer<microsynth_hw::KeyEvent>,
-    //     microsynth_hw::event::type_::Key, kbd.event_queue, all_queue
-    // };
-    // configure_adc(adc);
+    std::unordered_map<microsynth_hw::Keymap::Key, unsigned long> key_id{};
+    for (auto &[key, gpio_]: microsynth_hw::Keyboard::keymap.key2gpio)
+        key_id[key] = 0;
 
-    // std::cout << "\033[93mcurrent ADC options: " << adc.fetch_conf() << "\033[0m\n";
-    std::cout << "Hello from Pi.\n";
+    std::cout << "Event loop started\n";
 
     for (;;) {
-        // std::int16_t value = adc.analog_read(0);
-        // double fractional_value = static_cast<double>(value) / static_cast<double>(std::numeric_limits<std::int16_t>::max());
-        // std::cout << "A0: " << fractional_value << std::endl;
-        sleep_for(std::chrono::milliseconds(1000));
+        switch (std::shared_ptr event_ptr{all_queue.getWait()}; event_ptr->type) {
+            case microsynth_hw::event::type_::Key: {
+                microsynth_hw::KeyEvent &ke{event_ptr->value.key};
+                if (ke.kind == microsynth_hw::KeyEvent::Kind::KEY_UP) {
+                    std::cout << "Stopping key " << static_cast<std::uint8_t>(ke.key) << "\n";
+                    driver.enqueue(mkreqstop(key_id[ke.key]));
+                }
+                else if (ke.kind == microsynth_hw::KeyEvent::Kind::KEY_DOWN) {
+                    std::cout << "Example: playing key " << static_cast<std::uint8_t>(ke.key) << "\n";
+                    std::shared_ptr tone { sig_gen.add_tail(sig_gen.sine(Tuning::C4, 0.2)) };
+                    key_id[ke.key] = tone->id;
+                    driver.enqueue(mkqueue(tone));
+                }
+                break;
+            }
+            case microsynth_hw::event::type_::Joystick: {
+                break;
+            }
+        }
     }
     return 0;
 }
