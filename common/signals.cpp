@@ -95,16 +95,21 @@ namespace microsynth {
 
     std::unique_ptr<generic_clip> SignalGenerators::multisine(const std::vector<double> &frequencies,
         double amplitude) const {
+        const double n_freq = static_cast<double>(frequencies.size());
         return std::make_unique<generic_clip>(generic_clip{
             .clip_type = generic_clip::clip_type_t::EXACT,
             .data = {
                 exact_clip{
                     .getPCM = [=, *this]([[maybe_unused]] const std::shared_ptr<generic_clip> &that, const double base_time) {
                         double prod = 1.0;
+                        int n = 0;
                         for (double freq : frequencies) {
-                            prod *= std::sin(base_time * TAU * freq);
+                            if (n++ == 0)
+                                prod += std::sin(base_time * TAU * freq) * amplitude;
+                            else
+                                prod += std::sin(base_time * TAU * freq) * amplitude * 0.1;
                         }
-                        return static_cast<float>(prod * amplitude);
+                        return static_cast<float>(prod / n_freq);
                     }
                 }
             },
