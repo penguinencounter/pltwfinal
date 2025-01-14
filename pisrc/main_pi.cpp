@@ -84,6 +84,8 @@ int main_wrap() {
     [[maybe_unused]] microsynth::AudioDriver driver{};
     [[maybe_unused]] microsynth::SignalGenerators sig_gen{};
 
+    sig_gen.setSampleRate(44100);
+
     microsynth::threaded_queue<std::shared_ptr<microsynth_hw::event> > all_queue{};
     std::thread key_queue_proc{
         [&] {
