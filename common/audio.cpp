@@ -57,12 +57,13 @@ namespace microsynth {
     }
 
     void req_stop_sfx_command::run(pa_userdata *data, const PaTime now) const {
+        if (!data->active_clips.contains(id)) return;
         std::shared_ptr<generic_clip> &qref = data->active_clips.at(id);
         if (!qref->stopping) {
             qref->stopping = true;
             qref->stop_time = now;
         } else // Just delete it.
-            data->active_clips.erase(id);
+            qref->alive = false;
     }
 
     set_volume_command::set_volume_command(float volume) : new_volume(volume) {
