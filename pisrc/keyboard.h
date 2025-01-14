@@ -13,7 +13,7 @@ namespace microsynth_hw {
     // Intended to be used in Keyboard static initializer
     class Keymap {
     public:
-        enum class Key: std::uint8_t {
+        enum class Key: std::int8_t {
             C1,
             CSharp,
             D,

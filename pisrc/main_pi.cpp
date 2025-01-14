@@ -77,6 +77,10 @@ void wrap_and_transfer(microsynth_hw::event::type_ kind, microsynth::threaded_qu
     }
 }
 
+using Key = microsynth_hw::Keymap::Key;
+static constexpr int MAX_OCTAVE_OFFSET = 3;
+static constexpr int MIN_OCTAVE_OFFSET = -4;
+
 int main_wrap() {
     Hardware h{};
     microsynth_hw::Keyboard kbd{};
@@ -98,24 +102,69 @@ int main_wrap() {
 
     std::cout << "Event loop started\n";
 
+    int octave_selected = 0;
+    std::string key_names[] = {
+        "C",
+        "C#",
+        "D",
+        "D#",
+        "E",
+        "F",
+        "F#",
+        "G",
+        "G#",
+        "A",
+        "A#",
+        "B",
+        "C"
+    };
+
     for (;;) {
         switch (std::shared_ptr event_ptr{all_queue.getWait()}; event_ptr->type) {
             case microsynth_hw::event::type_::Key: {
                 microsynth_hw::KeyEvent &ke{event_ptr->value.key};
-                if (ke.kind == microsynth_hw::KeyEvent::Kind::KEY_UP) {
-                    std::cout << "Stopping key " << static_cast<std::uint8_t>(ke.key) << "\n";
-                    if (key_id.contains(ke.key))
-                        driver.enqueue(mkreqstop(key_id[ke.key]));
-                } else if (ke.kind == microsynth_hw::KeyEvent::Kind::KEY_DOWN) {
-                    std::cout << "Example: playing key " << static_cast<std::uint8_t>(ke.key) << "\n";
-                    std::shared_ptr tone{
-                        sig_gen.multisine({
-                                              Tuning::C4, Tuning::C4 / 2.0 - 1, Tuning::C4 / 3.0 - 2,
-                                              Tuning::C4 * 2.0 + 1, Tuning::C4 * 3.0 + 2
-                                          }, 0.3)
-                    };
-                    key_id[ke.key] = tone->id;
-                    driver.enqueue(mkqueue(tone));
+                if (ke.key >= Key::C1 && ke.key <= Key::C2) {
+                    // Note keys
+                    if (ke.kind == microsynth_hw::KeyEvent::Kind::KEY_UP) {
+                        std::cout << "Stopping key " << static_cast<std::uint8_t>(ke.key) << "\n";
+                        if (key_id.contains(ke.key))
+                            driver.enqueue(mkreqstop(key_id[ke.key]));
+                    } else if (ke.kind == microsynth_hw::KeyEvent::Kind::KEY_DOWN) {
+                        std::int8_t semitones = static_cast<std::int8_t>(ke.key) - static_cast<std::int8_t>(
+                                                    Key::A);
+                        double pitch =
+                                microsynth::factor(
+                                    microsynth::factor(Tuning::A4, Tuning::SEMITONE, semitones),
+                                    Tuning::OCTAVE,
+                                    octave_selected
+                                );
+                        std::cout << "play key " << key_names[static_cast<std::uint8_t>(ke.key)] << octave_selected + 4 << "\n";
+                        std::shared_ptr tone{
+                            sig_gen.multisine({
+                                                  pitch, pitch / 2.0 - 1, pitch / 3.0 - 2,
+                                                  pitch * 2.0 + 1, pitch * 3.0 + 2
+                                              }, 0.3)
+                        };
+                        key_id[ke.key] = tone->id;
+                        driver.enqueue(mkqueue(tone));
+                    }
+                }
+                if (ke.kind == microsynth_hw::KeyEvent::Kind::KEY_DOWN) {
+                    switch (ke.key) {
+                        case Key::OctUp: {
+                            octave_selected++;
+                            if (octave_selected > MAX_OCTAVE_OFFSET) octave_selected = MAX_OCTAVE_OFFSET;
+                            std::cout << "octave " << octave_selected + 4 << "\n";
+                            break;
+                        }
+                        case Key::OctDown: {
+                            octave_selected--;
+                            if (octave_selected < MIN_OCTAVE_OFFSET) octave_selected = MIN_OCTAVE_OFFSET;
+                            std::cout << "octave " << octave_selected + 4 << "\n";
+                            break;
+                        }
+                        default: break;
+                    }
                 }
                 break;
             }
