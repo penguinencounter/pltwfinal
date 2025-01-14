@@ -8,6 +8,8 @@
 #include <portaudio.h>
 #include <queue>
 #include <vector>
+
+#include "audio.h"
 #include "signalmeta.h"
 
 namespace microsynth
@@ -20,7 +22,7 @@ namespace microsynth
     struct pa_userdata
     {
         AudioDriver* that;
-        std::unordered_map<unsigned long, std::shared_ptr<queueable>> running{};
+        std::unordered_map<unsigned long, std::shared_ptr<generic_clip>> active_clips{};
         action_queue* queue_ptr;
 
         // Global Controls;
@@ -32,7 +34,7 @@ namespace microsynth
     public:
         virtual ~action_command() = default;
 
-        virtual void run([[maybe_unused]] pa_userdata* data) const
+        virtual void run([[maybe_unused]] pa_userdata* data, [[maybe_unused]] PaTime now) const
         {
         }
     };
@@ -40,10 +42,10 @@ namespace microsynth
     class queue_sfx_command final : public action_command
     {
     private:
-        std::shared_ptr<queueable> q;
+        std::shared_ptr<generic_clip> q;
 
     public:
-        explicit queue_sfx_command(const std::shared_ptr<queueable>& from);
+        explicit queue_sfx_command(const std::shared_ptr<generic_clip>& from);
 
         queue_sfx_command& operator=(const queue_sfx_command& from);
 
@@ -53,7 +55,7 @@ namespace microsynth
 
         queue_sfx_command(queue_sfx_command&& from) noexcept;
 
-        void run(pa_userdata* data) const override;
+        void run(pa_userdata* data, PaTime now) const override;
 
         ~queue_sfx_command() override;
     };
@@ -65,9 +67,9 @@ namespace microsynth
 
     public:
         explicit force_stop_sfx_command(unsigned long id);
-        explicit force_stop_sfx_command(const std::shared_ptr<queueable>& from);
+        explicit force_stop_sfx_command(const std::shared_ptr<generic_clip>& from);
 
-        void run(pa_userdata* data) const override;
+        void run(pa_userdata* data, PaTime now) const override;
     };
 
     class req_stop_sfx_command final : public action_command
@@ -77,9 +79,9 @@ namespace microsynth
 
     public:
         explicit req_stop_sfx_command(unsigned long id);
-        explicit req_stop_sfx_command(const std::shared_ptr<queueable>& from);
+        explicit req_stop_sfx_command(const std::shared_ptr<generic_clip>& from);
 
-        void run(pa_userdata* data) const override;
+        void run(pa_userdata* data, PaTime now) const override;
     };
 
     class set_volume_command final : public action_command
@@ -90,7 +92,7 @@ namespace microsynth
     public:
         explicit set_volume_command(float volume);
 
-        void run(pa_userdata* data) const override;
+        void run(pa_userdata* data, PaTime now) const override;
     };
 
     class AudioDriver

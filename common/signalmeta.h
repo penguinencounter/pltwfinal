@@ -1,7 +1,9 @@
 #ifndef SIGNALMETA_H
 #define SIGNALMETA_H
+#include <functional>
 #include <memory>
 #include <portaudio.h>
+#include <variant>
 
 namespace microsynth
 {
@@ -11,6 +13,47 @@ namespace microsynth
     using size_t = std::size_t;
 
     static unsigned long _next_ID = 1;
+
+    class generic_clip;
+
+    class exact_clip {
+    public:
+        std::function<signal_fmt(const std::shared_ptr<generic_clip>&, PaTime, std::size_t)> getPCM;
+    };
+
+    class sampled_clip {
+    public:
+        std::shared_ptr<signal_buf> buf;
+        size_t length;
+
+        bool looping;
+        size_t loop_at;
+        size_t loop_to;
+        size_t position = 0;
+    };
+
+    class generic_clip {
+    public:
+        enum class clip_type_t {
+            EXACT = 0, // mathematical functions
+            SAMPLES = 1, // exactly 44100 hz PCM
+        };
+        using clip_type_v = std::variant<sampled_clip, exact_clip>;
+        clip_type_t clip_type;
+        clip_type_v data;
+
+        std::function<void(const std::shared_ptr<generic_clip>&, PaTime, std::size_t)> sample_post {};
+        std::function<void(const std::shared_ptr<generic_clip>&, PaTime, PaTime, std::size_t)> stop_sample_post {};
+
+        PaTime start_time = 0.0;
+        PaTime stop_time = 0.0;
+        double volume = 1.0;
+        bool alive = true;
+        bool stopping = false;
+        unsigned long id = _next_ID++;
+
+        ~generic_clip();
+    };
 
     class queueable
     {

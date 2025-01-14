@@ -33,11 +33,11 @@ using std::this_thread::sleep_for;
 namespace chrono = std::chrono;
 namespace Tuning = microsynth::A440;
 
-std::shared_ptr<microsynth::queue_sfx_command> mkqueue(const std::shared_ptr<microsynth::queueable> &it) {
+std::shared_ptr<microsynth::queue_sfx_command> mkqueue(const std::shared_ptr<microsynth::generic_clip> &it) {
     return std::make_shared<microsynth::queue_sfx_command>(microsynth::queue_sfx_command{it});
 }
 
-std::shared_ptr<microsynth::req_stop_sfx_command> mkreqstop(const std::shared_ptr<microsynth::queueable> &it) {
+std::shared_ptr<microsynth::req_stop_sfx_command> mkreqstop(const std::shared_ptr<microsynth::generic_clip> &it) {
     return std::make_shared<microsynth::req_stop_sfx_command>(microsynth::req_stop_sfx_command{it});
 }
 
@@ -109,7 +109,7 @@ int main_wrap() {
                 }
                 else if (ke.kind == microsynth_hw::KeyEvent::Kind::KEY_DOWN) {
                     std::cout << "Example: playing key " << static_cast<std::uint8_t>(ke.key) << "\n";
-                    std::shared_ptr tone { sig_gen.add_tail(sig_gen.sine(Tuning::C4, 0.2)) };
+                    std::shared_ptr tone { sig_gen.sine(Tuning::C4, 0.2) };
                     key_id[ke.key] = tone->id;
                     driver.enqueue(mkqueue(tone));
                 }

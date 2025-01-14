@@ -5,6 +5,8 @@
 #ifndef SIGNALS_H
 #define SIGNALS_H
 #include <memory>
+#include <vector>
+
 #include "signalmeta.h"
 
 namespace microsynth
@@ -80,12 +82,10 @@ namespace microsynth
         void setSampleRate(size_t hz);
 
         [[nodiscard]] size_t getSampleRate() const;
-        [[nodiscard]] std::unique_ptr<queueable> sine(double freq, double amplitude = 1.0) const;
-        [[nodiscard]] std::unique_ptr<queueable> square(double freq, double amplitude = 1.0) const;
-        [[nodiscard]] std::unique_ptr<queueable> sawtooth(double freq, double amplitude = 1.0) const;
-        [[nodiscard]] std::unique_ptr<queueable> noise(double length, double amplitude = 1.0) const;
-        [[nodiscard]] std::unique_ptr<queueable> add_tail(const std::unique_ptr<const queueable>& from,
-                                                          double tail = 0.02) const;
+        [[nodiscard]] std::unique_ptr<generic_clip> sine(double freq, double amplitude = 1.0) const;
+        [[nodiscard]] std::unique_ptr<generic_clip> square(double freq, double amplitude = 1.0) const;
+        [[nodiscard]] std::unique_ptr<queueable> multisine(const std::vector<double>& frequencies, double amplitude = 1.0) const;
+        [[nodiscard]] std::unique_ptr<queueable> sine_overtones(double root_freq, double modifiers, double amplitude = 1.0) const;
     };
 }
 

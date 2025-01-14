@@ -24,6 +24,10 @@ namespace microsynth
         }
     }
 
+    generic_clip::~generic_clip() {
+
+    }
+
     std::unique_ptr<queueable> queueable::copy() const
     {
         return std::make_unique<queueable>(queueable{
