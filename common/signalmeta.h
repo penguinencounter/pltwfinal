@@ -54,6 +54,10 @@ namespace microsynth
         unsigned long id = _next_ID++;
 
         ~generic_clip();
+
+        [[nodiscard]] std::unique_ptr<generic_clip> copy() const;
+        friend std::ostream& operator<<(std::ostream& os, generic_clip const& m);
+
     };
 
     class queueable

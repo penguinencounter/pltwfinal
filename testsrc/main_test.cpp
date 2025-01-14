@@ -44,12 +44,12 @@ using std::this_thread::sleep_for;
 namespace chrono = std::chrono;
 namespace Tuning = microsynth::A440;
 
-std::shared_ptr<microsynth::queue_sfx_command> mkqueue(const std::shared_ptr<microsynth::queueable>& it)
+std::shared_ptr<microsynth::queue_sfx_command> mkqueue(const std::shared_ptr<microsynth::generic_clip>& it)
 {
     return std::make_shared<microsynth::queue_sfx_command>(microsynth::queue_sfx_command { it });
 }
 
-std::shared_ptr<microsynth::req_stop_sfx_command> mkstop(const std::shared_ptr<microsynth::queueable>& it)
+std::shared_ptr<microsynth::req_stop_sfx_command> mkstop(const std::shared_ptr<microsynth::generic_clip>& it)
 {
     return std::make_shared<microsynth::req_stop_sfx_command>(microsynth::req_stop_sfx_command { it });
 }
@@ -69,7 +69,7 @@ std::shared_ptr<microsynth::req_stop_sfx_command> mkstop(const std::shared_ptr<m
         Tuning::A4,
     };
 
-    std::shared_ptr<microsynth::queueable> pitch_actions[no_pitches];
+    std::shared_ptr<microsynth::generic_clip> pitch_actions[no_pitches];
     for (size_t i = 0; i < no_pitches; i++)
         pitch_actions[i] = std::shared_ptr(sig_gen.square(pitches[i], 0.33));
 
@@ -86,16 +86,6 @@ std::shared_ptr<microsynth::req_stop_sfx_command> mkstop(const std::shared_ptr<m
         sleep_for(chrono::milliseconds(100));
         driver.enqueue(mkstop(clone));
     }
-}
-
-void test_fadeout(microsynth::AudioDriver& driver, const microsynth::SignalGenerators& sig_gen)
-{
-    std::shared_ptr c = sig_gen.add_tail(sig_gen.square(Tuning::C4, 0.8));
-    std::cout << *c << "\n";
-    driver.enqueue(mkqueue(c));
-    sleep_for(chrono::milliseconds(500));
-    driver.enqueue(mkstop(c));
-    sleep_for(chrono::milliseconds(1000));
 }
 
 void test_read(microsynth::AudioDriver& driver, const microsynth::SignalGenerators&)

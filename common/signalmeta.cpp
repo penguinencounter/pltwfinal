@@ -28,6 +28,16 @@ namespace microsynth
 
     }
 
+    std::unique_ptr<generic_clip> generic_clip::copy() const
+    {
+        return std::make_unique<generic_clip>(generic_clip {
+            .clip_type = this->clip_type,
+            .data = this->data,
+            .sample_post = this->sample_post,
+            .stop_sample_post = this->stop_sample_post
+        });
+    }
+
     std::unique_ptr<queueable> queueable::copy() const
     {
         return std::make_unique<queueable>(queueable{
@@ -53,6 +63,13 @@ namespace microsynth
     void reid(queueable& target)
     {
         target.id = _next_ID++;
+    }
+
+    std::ostream& operator<<(std::ostream& os, generic_clip const& m)
+    {
+        std::stringstream collect {};
+        collect << "{clip " << m.id << "}";
+        return os << collect.str();
     }
 
     std::ostream& operator<<(std::ostream& os, queueable const& m)
