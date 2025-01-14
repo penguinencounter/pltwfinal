@@ -84,8 +84,8 @@ namespace microsynth
         [[nodiscard]] size_t getSampleRate() const;
         [[nodiscard]] std::unique_ptr<generic_clip> sine(double freq, double amplitude = 1.0) const;
         [[nodiscard]] std::unique_ptr<generic_clip> square(double freq, double amplitude = 1.0) const;
-        [[nodiscard]] std::unique_ptr<queueable> multisine(const std::vector<double>& frequencies, double amplitude = 1.0) const;
-        [[nodiscard]] std::unique_ptr<queueable> sine_overtones(double root_freq, double modifiers, double amplitude = 1.0) const;
+        [[nodiscard]] std::unique_ptr<generic_clip> multisine(const std::vector<double>& frequencies, double amplitude = 1.0) const;
+        [[nodiscard]] std::unique_ptr<generic_clip> sine_overtones(double root_freq, double modifiers, double amplitude = 1.0) const;
     };
 }
 

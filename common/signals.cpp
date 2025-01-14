@@ -92,4 +92,32 @@ namespace microsynth {
             }
         });
     }
+
+    std::unique_ptr<generic_clip> SignalGenerators::multisine(const std::vector<double> &frequencies,
+        double amplitude) const {
+        return std::make_unique<generic_clip>(generic_clip{
+            .clip_type = generic_clip::clip_type_t::EXACT,
+            .data = {
+                exact_clip{
+                    .getPCM = [=, *this]([[maybe_unused]] const std::shared_ptr<generic_clip> &that, const double base_time) {
+                        double prod = 1.0;
+                        for (double freq : frequencies) {
+                            prod *= std::sin(base_time * TAU * freq);
+                        }
+                        return static_cast<float>(prod * amplitude);
+                    }
+                }
+            },
+            .sample_post = [=, *this](const std::shared_ptr<generic_clip> &that, [[maybe_unused]] PaTime _1,
+                               [[maybe_unused]] std::size_t _2) {
+                that->volume = 1.0;
+            },
+            .stop_sample_post = [=, *this](const std::shared_ptr<generic_clip> &that, [[maybe_unused]] PaTime base_time,
+                                    PaTime stop_time, std::size_t offset) {
+                if (stop_time > 0.05) that->alive = false;
+                const double real_t = static_cast<double>(offset) / static_cast<double>(sampleRate) + stop_time;
+                that->volume *= std::max(0.0, 20.0 * (0.05 - real_t));
+            }
+        });
+    }
 }
