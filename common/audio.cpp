@@ -11,7 +11,8 @@
 #include "helpers.h"
 
 namespace microsynth {
-    void queue_sfx_command::run(pa_userdata *data, [[maybe_unused]] PaTime now) const {
+    void queue_sfx_command::run(pa_userdata *data, const PaTime now) const {
+        q->start_time = now;
         data->active_clips.insert({q->id, q});
     }
 
