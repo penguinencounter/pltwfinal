@@ -5,6 +5,7 @@
 #include "signals.h"
 #include <cmath>
 #include <random>
+#include <iostream>
 
 namespace microsynth {
     namespace {
@@ -52,6 +53,7 @@ namespace microsynth {
                     .getPCM = [&]([[maybe_unused]] const std::shared_ptr<generic_clip> &that, const PaTime base_time,
                                   const std::size_t offset) {
                         const double real_t = static_cast<double>(offset) / static_cast<double>(sampleRate) + base_time;
+                        std::cout << base_time << "\n";
                         return static_cast<float>(std::sin(real_t * TAU * freq) * amplitude);
                     }
                 }
