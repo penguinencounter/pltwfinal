@@ -106,10 +106,14 @@ int main_wrap() {
                     std::cout << "Stopping key " << static_cast<std::uint8_t>(ke.key) << "\n";
                     if (key_id.contains(ke.key))
                         driver.enqueue(mkreqstop(key_id[ke.key]));
-                }
-                else if (ke.kind == microsynth_hw::KeyEvent::Kind::KEY_DOWN) {
+                } else if (ke.kind == microsynth_hw::KeyEvent::Kind::KEY_DOWN) {
                     std::cout << "Example: playing key " << static_cast<std::uint8_t>(ke.key) << "\n";
-                    std::shared_ptr tone { sig_gen.multisine({Tuning::C4, Tuning::C4 / 2.0 - 5, Tuning::C4 * 2.0 + 5}, 0.8) };
+                    std::shared_ptr tone{
+                        sig_gen.multisine({
+                                              Tuning::C4, Tuning::C4 / 2.0 - 1, Tuning::C4 / 3.0 - 2,
+                                              Tuning::C4 * 2.0 + 1, Tuning::C4 * 3.0 + 2
+                                          }, 0.3)
+                    };
                     key_id[ke.key] = tone->id;
                     driver.enqueue(mkqueue(tone));
                 }
