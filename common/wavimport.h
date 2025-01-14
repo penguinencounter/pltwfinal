@@ -8,7 +8,7 @@
 namespace extras
 {
 
-    [[nodiscard]] std::unique_ptr<microsynth::queueable> import_wav(const std::string& path);
+    [[nodiscard]] std::unique_ptr<microsynth::generic_clip> import_wav(const std::string& path);
 
 }
 
