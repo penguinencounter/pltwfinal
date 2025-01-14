@@ -95,7 +95,7 @@ namespace microsynth {
 
     std::unique_ptr<generic_clip> SignalGenerators::multisine(const std::vector<double> &frequencies,
         double amplitude) const {
-        const double n_freq = static_cast<double>(frequencies.size());
+        // const double n_freq = static_cast<double>(frequencies.size());
         return std::make_unique<generic_clip>(generic_clip{
             .clip_type = generic_clip::clip_type_t::EXACT,
             .data = {
