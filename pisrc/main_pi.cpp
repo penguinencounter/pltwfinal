@@ -143,7 +143,7 @@ int main_wrap() {
                             sig_gen.multisine({
                                                   pitch, pitch / 2.0 - 1, pitch / 3.0 - 2,
                                                   pitch * 2.0 + 1, pitch * 3.0 + 2
-                                              }, 0.3)
+                                              }, 0.4)
                         };
                         key_id[ke.key] = tone->id;
                         driver.enqueue(mkqueue(tone));
