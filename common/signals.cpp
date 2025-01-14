@@ -50,18 +50,18 @@ namespace microsynth {
             .clip_type = generic_clip::clip_type_t::EXACT,
             .data = {
                 exact_clip{
-                    .getPCM = [=]([[maybe_unused]] const std::shared_ptr<generic_clip> &that, const PaTime base_time,
+                    .getPCM = [=, *this]([[maybe_unused]] const std::shared_ptr<generic_clip> &that, const PaTime base_time,
                                   const std::size_t offset) {
                         const double real_t = (static_cast<double>(offset) / static_cast<double>(sampleRate)) + base_time;
                         return static_cast<float>(std::sin(real_t * TAU * freq) * amplitude);
                     }
                 }
             },
-            .sample_post = [=](const std::shared_ptr<generic_clip> &that, [[maybe_unused]] PaTime _1,
+            .sample_post = [=, *this](const std::shared_ptr<generic_clip> &that, [[maybe_unused]] PaTime _1,
                                [[maybe_unused]] std::size_t _2) {
                 that->volume = 1.0;
             },
-            .stop_sample_post = [=](const std::shared_ptr<generic_clip> &that, [[maybe_unused]] PaTime base_time,
+            .stop_sample_post = [=, *this](const std::shared_ptr<generic_clip> &that, [[maybe_unused]] PaTime base_time,
                                     PaTime stop_time, std::size_t offset) {
                 if (stop_time > 0.05) that->alive = false;
                 const double real_t = static_cast<double>(offset) / static_cast<double>(sampleRate) + stop_time;
@@ -76,7 +76,7 @@ namespace microsynth {
             .clip_type = generic_clip::clip_type_t::EXACT,
             .data = {
                 exact_clip{
-                    .getPCM = [=]([[maybe_unused]] const std::shared_ptr<generic_clip> &that, const PaTime base_time,
+                    .getPCM = [=, *this]([[maybe_unused]] const std::shared_ptr<generic_clip> &that, const PaTime base_time,
                                   const std::size_t offset) {
                         const double real_t = static_cast<double>(offset) / static_cast<double>(sampleRate) + base_time;
                         return static_cast<float>(
@@ -84,11 +84,11 @@ namespace microsynth {
                     }
                 }
             },
-            .sample_post = [=](const std::shared_ptr<generic_clip> &that, [[maybe_unused]] PaTime _1,
+            .sample_post = [=, *this](const std::shared_ptr<generic_clip> &that, [[maybe_unused]] PaTime _1,
                                [[maybe_unused]] std::size_t _2) {
                 that->volume = 1.0;
             },
-            .stop_sample_post = [=](const std::shared_ptr<generic_clip> &that, [[maybe_unused]] PaTime base_time,
+            .stop_sample_post = [=, *this](const std::shared_ptr<generic_clip> &that, [[maybe_unused]] PaTime base_time,
                                     PaTime stop_time, std::size_t offset) {
                 if (stop_time > 0.05) that->alive = false;
                 const double real_t = static_cast<double>(offset) / static_cast<double>(sampleRate) + stop_time;
