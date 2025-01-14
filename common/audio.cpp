@@ -159,6 +159,7 @@ namespace microsynth
                 if (looping && position == loop_at) position = loop_to;
                 if (position >= q->length)
                 {
+                    // Prevent overruns
                     alive = false;
                     // queue it for removal if we have space to do that
                     if (remove_cur < RMQ_SIZE)
