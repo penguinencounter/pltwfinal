@@ -109,7 +109,7 @@ namespace microsynth {
                             else
                                 prod += std::sin(base_time * TAU * freq) * amplitude * 0.1;
                         }
-                        return static_cast<float>(prod / n_freq);
+                        return static_cast<float>(prod);
                     }
                 }
             },
