@@ -88,6 +88,8 @@ int main_wrap() {
     [[maybe_unused]] microsynth::AudioDriver driver{};
     [[maybe_unused]] microsynth::SignalGenerators sig_gen{};
 
+    std::shared_ptr rickroll { extras::import_wav("astley.priv.wav") };
+
     sig_gen.setSampleRate(44100);
 
     microsynth::threaded_queue<std::shared_ptr<microsynth_hw::event> > all_queue{};
@@ -161,6 +163,14 @@ int main_wrap() {
                             octave_selected--;
                             if (octave_selected < MIN_OCTAVE_OFFSET) octave_selected = MIN_OCTAVE_OFFSET;
                             std::cout << "octave " << octave_selected + 4 << "\n";
+                            break;
+                        }
+                        default: break;
+                    }
+                    switch (ke.key) {
+                        case Key::OctUp:
+                        case Key::OctDown: {
+                            if (kbd.key_state[Key::OctUp] && kbd.key_state[Key::OctDown]) driver.enqueue(mkqueue(rickroll->copy()));
                             break;
                         }
                         default: break;
