@@ -109,7 +109,7 @@ int main_wrap() {
                 }
                 else if (ke.kind == microsynth_hw::KeyEvent::Kind::KEY_DOWN) {
                     std::cout << "Example: playing key " << static_cast<std::uint8_t>(ke.key) << "\n";
-                    std::shared_ptr tone { sig_gen.sine(Tuning::C4, 0.2) };
+                    std::shared_ptr tone { sig_gen.sine(Tuning::C4, 0.8) };
                     key_id[ke.key] = tone->id;
                     driver.enqueue(mkqueue(tone));
                 }
