@@ -155,6 +155,7 @@ namespace microsynth {
                 }
 
                 sig *= static_cast<signal_fmt>(clip->volume);
+                std::cout << sig << "\n";
                 value += sig;
             }
             while (remove_cur > 0) {
