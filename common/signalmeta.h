@@ -18,7 +18,8 @@ namespace microsynth
 
     class exact_clip {
     public:
-        std::function<signal_fmt(const std::shared_ptr<generic_clip>&, PaTime, std::size_t)> getPCM;
+        std::function<signal_fmt(const std::shared_ptr<generic_clip>&, double)> getPCM;
+        double time_basis = 0.0;
     };
 
     class sampled_clip {

@@ -130,7 +130,9 @@ namespace microsynth {
                 signal_fmt sig;
                 switch (clip->clip_type) {
                     case generic_clip::clip_type_t::EXACT: {
-                        sig = std::get<exact_clip>(clip->data).getPCM(clip, offsetT, i);
+                        auto& [getPCM, time_basis] = std::get<exact_clip>(clip->data);
+                        sig = getPCM(clip, time_basis);
+                        time_basis += 1.0/44100.0; // adjust to pitchbend
                         break;
                     }
                     case generic_clip::clip_type_t::SAMPLES: {

@@ -50,10 +50,8 @@ namespace microsynth {
             .clip_type = generic_clip::clip_type_t::EXACT,
             .data = {
                 exact_clip{
-                    .getPCM = [=, *this]([[maybe_unused]] const std::shared_ptr<generic_clip> &that, const PaTime base_time,
-                                  const std::size_t offset) {
-                        const double real_t = (static_cast<double>(offset) / static_cast<double>(sampleRate)) + base_time;
-                        return static_cast<float>(std::sin(real_t * TAU * freq) * amplitude);
+                    .getPCM = [=, *this]([[maybe_unused]] const std::shared_ptr<generic_clip> &that, const double base_time) {
+                        return static_cast<float>(std::sin(base_time * TAU * freq) * amplitude);
                     }
                 }
             },
@@ -76,11 +74,9 @@ namespace microsynth {
             .clip_type = generic_clip::clip_type_t::EXACT,
             .data = {
                 exact_clip{
-                    .getPCM = [=, *this]([[maybe_unused]] const std::shared_ptr<generic_clip> &that, const PaTime base_time,
-                                  const std::size_t offset) {
-                        const double real_t = static_cast<double>(offset) / static_cast<double>(sampleRate) + base_time;
+                    .getPCM = [=, *this]([[maybe_unused]] const std::shared_ptr<generic_clip> &that, const double base_time) {
                         return static_cast<float>(
-                            (std::fmod(real_t, period) < (0.5 * period)) ? amplitude : -amplitude);
+                            (std::fmod(base_time, period) < (0.5 * period)) ? amplitude : -amplitude);
                     }
                 }
             },
