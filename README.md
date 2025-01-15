@@ -6,7 +6,7 @@ C++-based software for a Raspberry Pi 4-based tiny synthesizer.
 
 ## How do mechanical keyboard switches work?
 
-![][https://raw.githubusercontent.com/penguinencounter/pltwfinal/refs/heads/main/media/keysw-diag.png]
+![](https://raw.githubusercontent.com/penguinencounter/pltwfinal/refs/heads/main/media/keysw-diag.png)
 
 When the key is pressed down, a small, flexible contact completes a circuit through the two wires of the key. For our project, we can use the fact that they function as simple switches to wire them directly to the GPIO ports on the Raspberry PI to allow for user input on the keyboard.
 
